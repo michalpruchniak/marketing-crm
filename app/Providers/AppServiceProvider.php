@@ -2,6 +2,17 @@
 
 namespace App\Providers;
 
+use App\Repositories\ClientRepository;
+use App\Repositories\Contracts\ClientRepositoryInterface;
+use App\Repositories\Contracts\CredentialPayloadRepositoryInterface;
+use App\Repositories\Contracts\CredentialRepositoryInterface;
+use App\Repositories\CredentialPayloadRepository;
+use App\Repositories\CredentialRepository;
+use App\Services\ClientService;
+use App\Services\Contracts\ClientServiceInterface;
+use App\Services\Contracts\CredentialServiceInterface;
+use App\Services\CredentialService;
+use App\Supports\SecretsStorage\Factories\PasswordSecretStrategyFactory;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -15,7 +26,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(PasswordSecretStrategyFactory::class);
+
+        $this->app->bind(ClientRepositoryInterface::class, ClientRepository::class);
+        $this->app->bind(CredentialRepositoryInterface::class, CredentialRepository::class);
+        $this->app->bind(CredentialPayloadRepositoryInterface::class, CredentialPayloadRepository::class);
+
+        $this->app->bind(CredentialServiceInterface::class, CredentialService::class);
+        $this->app->bind(ClientServiceInterface::class, ClientService::class);
     }
 
     /**
