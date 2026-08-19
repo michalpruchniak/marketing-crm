@@ -44,6 +44,7 @@ class CredentialService implements CredentialServiceInterface
                 login: $data->login,
                 password: $data->password,
                 additionalInformation: $data->additionalInformation,
+                url: $data->url,
             ));
 
             /** @var Credential $credential */
@@ -80,6 +81,7 @@ class CredentialService implements CredentialServiceInterface
             login: $payload->login,
             password: $payload->password,
             additionalInformation: $payload->additionalInformation,
+            url: $payload->url,
         );
     }
 

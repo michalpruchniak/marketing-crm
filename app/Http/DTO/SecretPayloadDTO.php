@@ -8,5 +8,6 @@ final readonly class SecretPayloadDTO
         public string $login,
         public string $password,
         public ?string $additionalInformation = null,
+        public ?string $url = null,
     ) {}
 }

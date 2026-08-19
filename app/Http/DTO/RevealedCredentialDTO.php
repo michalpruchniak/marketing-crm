@@ -11,5 +11,6 @@ final readonly class RevealedCredentialDTO
         public string $login,
         public string $password,
         public ?string $additionalInformation = null,
+        public ?string $url = null,
     ) {}
 }

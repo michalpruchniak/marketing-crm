@@ -58,6 +58,7 @@ class ClientCredentialController extends Controller
             'login' => $payload->login,
             'password' => $payload->password,
             'additional_information' => $payload->additionalInformation,
+            'url' => $payload->url,
         ]);
     }
 

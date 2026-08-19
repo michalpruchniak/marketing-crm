@@ -4,21 +4,17 @@ import { useState } from 'react';
 import ClientController from '@/actions/App/Http/Controllers/ClientController';
 import ClientCredentialController from '@/actions/App/Http/Controllers/ClientCredentialController';
 import Heading from '@/components/heading';
-import InputError from '@/components/input-error';
-import PasswordInput from '@/components/password-input';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
     DialogContent,
     DialogDescription,
-    DialogFooter,
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+import AddCredentialModal from './__partials/AddCredentialModal';
+import RevealCredentialModal from './__partials/RevealCredentialModal';
 import { index as clientsIndex } from '@/routes/clients';
 
 type Client = {
@@ -43,6 +39,7 @@ type RevealedCredential = {
     login: string;
     password: string;
     additional_information: string | null;
+    url?: string | null;
 };
 
 export default function ClientsShow({
@@ -256,98 +253,13 @@ export default function ClientsShow({
                 </section>
             </div>
 
-            <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-                <DialogContent className="sm:max-w-lg">
-                    <DialogHeader>
-                        <DialogTitle>Dodaj credential</DialogTitle>
-                    </DialogHeader>
+            <AddCredentialModal
+                clientId={client.id}
+                open={createOpen}
+                onOpenChange={setCreateOpen}
+            />
 
-                    <Form
-                        {...ClientCredentialController.store.form(client.id)}
-                        options={{ preserveScroll: true }}
-                        resetOnSuccess
-                        onSuccess={() => setCreateOpen(false)}
-                        className="space-y-4"
-                    >
-                        {({ processing, errors }) => (
-                            <>
-                                <div className="grid gap-2">
-                                    <Label htmlFor="name">Nazwa</Label>
-                                    <Input
-                                        id="name"
-                                        name="name"
-                                        required
-                                        autoFocus
-                                        placeholder="FTP / Panel / Email"
-                                    />
-                                    <InputError message={errors.name} />
-                                </div>
-
-                                <div className="grid gap-2">
-                                    <Label htmlFor="description">Opis</Label>
-                                    <Textarea
-                                        id="description"
-                                        name="description"
-                                        placeholder="Opcjonalny opis"
-                                    />
-                                    <InputError message={errors.description} />
-                                </div>
-
-                                <div className="grid gap-2">
-                                    <Label htmlFor="login">Login</Label>
-                                    <Input
-                                        id="login"
-                                        name="login"
-                                        required
-                                        autoComplete="off"
-                                    />
-                                    <InputError message={errors.login} />
-                                </div>
-
-                                <div className="grid gap-2">
-                                    <Label htmlFor="password">Hasło</Label>
-                                    <PasswordInput
-                                        id="password"
-                                        name="password"
-                                        required
-                                        autoComplete="new-password"
-                                    />
-                                    <InputError message={errors.password} />
-                                </div>
-
-                                <div className="grid gap-2">
-                                    <Label htmlFor="additional_information">
-                                        Dodatkowe informacje
-                                    </Label>
-                                    <Textarea
-                                        id="additional_information"
-                                        name="additional_information"
-                                        placeholder="PIN, kody recovery, itd."
-                                    />
-                                    <InputError
-                                        message={errors.additional_information}
-                                    />
-                                </div>
-
-                                <DialogFooter>
-                                    <Button
-                                        type="button"
-                                        variant="outline"
-                                        onClick={() => setCreateOpen(false)}
-                                    >
-                                        Anuluj
-                                    </Button>
-                                    <Button type="submit" disabled={processing}>
-                                        Zapisz
-                                    </Button>
-                                </DialogFooter>
-                            </>
-                        )}
-                    </Form>
-                </DialogContent>
-            </Dialog>
-
-            <Dialog
+            <RevealCredentialModal
                 open={revealOpen}
                 onOpenChange={(open) => {
                     setRevealOpen(open);
@@ -355,48 +267,8 @@ export default function ClientsShow({
                         setRevealed(null);
                     }
                 }}
-            >
-                <DialogContent>
-                    <DialogHeader>
-                        <DialogTitle>
-                            {revealed?.name ?? 'Credential'}
-                        </DialogTitle>
-                        <DialogDescription>
-                            {revealed?.description ??
-                                'Odszyfrowane dane tego wpisu.'}
-                        </DialogDescription>
-                    </DialogHeader>
-
-                    {revealed && (
-                        <div className="space-y-3 text-sm">
-                            <div>
-                                <div className="text-muted-foreground">
-                                    Login
-                                </div>
-                                <div className="font-mono">{revealed.login}</div>
-                            </div>
-                            <div>
-                                <div className="text-muted-foreground">
-                                    Hasło
-                                </div>
-                                <div className="font-mono">
-                                    {revealed.password}
-                                </div>
-                            </div>
-                            {revealed.additional_information && (
-                                <div>
-                                    <div className="text-muted-foreground">
-                                        Dodatkowe informacje
-                                    </div>
-                                    <div className="whitespace-pre-wrap font-mono">
-                                        {revealed.additional_information}
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                    )}
-                </DialogContent>
-            </Dialog>
+                credential={revealed}
+            />
         </>
     );
 }

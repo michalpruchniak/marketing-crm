@@ -12,5 +12,6 @@ final readonly class StoreCredentialDTO
         public string $login,
         public string $password,
         public ?string $additionalInformation = null,
+        public ?string $url = null,
     ) {}
 }

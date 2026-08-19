@@ -20,6 +20,7 @@ final class HashicorpPasswordSecretStrategy implements PasswordSecretStrategyInt
             'login' => $payload->login,
             'password' => $payload->password,
             'additional_information' => $payload->additionalInformation,
+            'url' => $payload->url,
         ]);
     }
 
@@ -48,6 +49,7 @@ final class HashicorpPasswordSecretStrategy implements PasswordSecretStrategyInt
             additionalInformation: isset($secret['additional_information'])
                 ? (string) $secret['additional_information']
                 : null,
+            url: isset($secret['url']) ? (string) $secret['url'] : null,
         );
     }
 }

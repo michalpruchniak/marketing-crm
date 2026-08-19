@@ -22,6 +22,7 @@ final class DatabasePasswordSecretStrategy implements PasswordSecretStrategyInte
                 'login' => $payload->login,
                 'password' => $payload->password,
                 'additional_information' => $payload->additionalInformation,
+                'url' => $payload->url,
             ]),
         );
     }
@@ -49,7 +50,8 @@ final class DatabasePasswordSecretStrategy implements PasswordSecretStrategyInte
         return new SecretPayloadDTO(
             login: $payload['login'],
             password: $payload['password'],
-            additionalInformation: $payload['additional_information'],
+            additionalInformation: $payload['additional_information'] ?? null,
+            url: $payload['url'] ?? null,
         );
     }
 }

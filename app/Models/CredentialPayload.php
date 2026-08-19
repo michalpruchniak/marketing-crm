@@ -18,22 +18,23 @@ class CredentialPayload extends Model
     ];
 
     /**
-     * @return array{login: string, password: string, additional_information: string|null}
+     * @return array{login: string, password: string, additional_information: string|null, url: string|null}
      */
     public function decryptedPayload(): array
     {
-        /** @var array{login: string, password: string, additional_information?: string|null} $payload */
+        /** @var array{login: string, password: string, additional_information?: string|null, url?: string|null} $payload */
         $payload = json_decode(decrypt($this->encrypted_payload), true, 512, JSON_THROW_ON_ERROR);
 
         return [
             'login' => $payload['login'],
             'password' => $payload['password'],
             'additional_information' => $payload['additional_information'] ?? null,
+            'url' => $payload['url'] ?? null,
         ];
     }
 
     /**
-     * @param  array{login: string, password: string, additional_information?: string|null}  $payload
+     * @param  array{login: string, password: string, additional_information?: string|null, url?: string|null}  $payload
      */
     public static function encryptPayload(array $payload): string
     {
@@ -41,6 +42,7 @@ class CredentialPayload extends Model
             'login' => $payload['login'],
             'password' => $payload['password'],
             'additional_information' => $payload['additional_information'] ?? null,
+            'url' => $payload['url'] ?? null,
         ], JSON_THROW_ON_ERROR));
     }
 }

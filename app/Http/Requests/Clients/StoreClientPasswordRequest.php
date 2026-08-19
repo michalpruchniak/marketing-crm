@@ -23,6 +23,7 @@ class StoreClientPasswordRequest extends FormRequest
             'login' => ['required', 'string', 'max:255'],
             'password' => ['required', 'string', 'max:1000'],
             'additional_information' => ['nullable', 'string', 'max:2000'],
+            'url' => ['nullable', 'url', 'max:2048'],
         ];
     }
 
@@ -36,6 +37,7 @@ class StoreClientPasswordRequest extends FormRequest
             login: $this->validated('login'),
             password: $this->validated('password'),
             additionalInformation: $this->validated('additional_information'),
+            url: $this->validated('url'),
         );
     }
 }
