@@ -1,4 +1,5 @@
 import { Form } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -20,16 +21,15 @@ type Props = {
     onOpenChange: (open: boolean) => void;
 };
 
-export default function AddCredentialModal({
-    clientId,
-    open,
-    onOpenChange,
-}: Props) {
+export default function AddCredentialModal({ clientId, open, onOpenChange }: Props) {
+    const { t } = useTranslation('clients');
+    const { t: tc } = useTranslation('common');
+
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-lg">
                 <DialogHeader>
-                    <DialogTitle>Dodaj credential</DialogTitle>
+                    <DialogTitle>{t('addCredentialTitle')}</DialogTitle>
                 </DialogHeader>
 
                 <Form
@@ -42,35 +42,40 @@ export default function AddCredentialModal({
                     {({ processing, errors }) => (
                         <>
                             <div className="grid gap-2">
-                                <Label htmlFor="name">Nazwa</Label>
+                                <Label htmlFor="name">{tc('name')}</Label>
                                 <Input
                                     id="name"
                                     name="name"
                                     required
                                     autoFocus
-                                    placeholder="FTP / Panel / Email"
+                                    placeholder={t('credNamePlaceholder')}
                                 />
                                 <InputError message={errors.name} />
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="description">Opis</Label>
+                                <Label htmlFor="description">{tc('description')}</Label>
                                 <Textarea
                                     id="description"
                                     name="description"
-                                    placeholder="Opcjonalny opis"
+                                    placeholder={t('descriptionPlaceholder')}
                                 />
                                 <InputError message={errors.description} />
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="url">Adres URL (opcjonalnie)</Label>
-                                <Input id="url" name="url" type="url" placeholder="https://example.com" />
+                                <Label htmlFor="url">{t('urlOptional')}</Label>
+                                <Input
+                                    id="url"
+                                    name="url"
+                                    type="url"
+                                    placeholder={t('urlPlaceholder')}
+                                />
                                 <InputError message={errors.url} />
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="login">Login</Label>
+                                <Label htmlFor="login">{tc('login')}</Label>
                                 <Input
                                     id="login"
                                     name="login"
@@ -81,7 +86,7 @@ export default function AddCredentialModal({
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="password">Hasło</Label>
+                                <Label htmlFor="password">{tc('password')}</Label>
                                 <PasswordInput
                                     id="password"
                                     name="password"
@@ -93,28 +98,22 @@ export default function AddCredentialModal({
 
                             <div className="grid gap-2">
                                 <Label htmlFor="additional_information">
-                                    Dodatkowe informacje
+                                    {tc('additionalInformation')}
                                 </Label>
                                 <Textarea
                                     id="additional_information"
                                     name="additional_information"
-                                    placeholder="PIN, kody recovery, itd."
+                                    placeholder={t('additionalInformationPlaceholder')}
                                 />
-                                <InputError
-                                    message={errors.additional_information}
-                                />
+                                <InputError message={errors.additional_information} />
                             </div>
 
                             <DialogFooter>
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    onClick={() => onOpenChange(false)}
-                                >
-                                    Anuluj
+                                <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+                                    {tc('cancel')}
                                 </Button>
                                 <Button type="submit" disabled={processing}>
-                                    Zapisz
+                                    {tc('save')}
                                 </Button>
                             </DialogFooter>
                         </>

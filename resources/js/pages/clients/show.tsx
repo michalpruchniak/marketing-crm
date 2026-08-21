@@ -1,18 +1,13 @@
-import { Form, Head, router } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import { Eye, KeyRound, Plus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import ClientController from '@/actions/App/Http/Controllers/ClientController';
 import ClientCredentialController from '@/actions/App/Http/Controllers/ClientCredentialController';
+import DeleteModal from '@/components/delete-modal';
 import Heading from '@/components/heading';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-} from '@/components/ui/dialog';
 import AddCredentialModal from './__partials/AddCredentialModal';
 import RevealCredentialModal from './__partials/RevealCredentialModal';
 import { index as clientsIndex } from '@/routes/clients';
@@ -49,11 +44,16 @@ export default function ClientsShow({
     client: Client;
     credentials: CredentialMeta[];
 }) {
+    const { t } = useTranslation('clients');
+    const { t: tc } = useTranslation('common');
+
     const [createOpen, setCreateOpen] = useState(false);
     const [revealed, setRevealed] = useState<RevealedCredential | null>(null);
     const [revealOpen, setRevealOpen] = useState(false);
     const [revealLoading, setRevealLoading] = useState(false);
     const [revealError, setRevealError] = useState<string | null>(null);
+    const [deleteClientOpen, setDeleteClientOpen] = useState(false);
+    const [deleteCredential, setDeleteCredential] = useState<CredentialMeta | null>(null);
 
     async function handleReveal(credentialId: string) {
         setRevealLoading(true);
@@ -73,53 +73,31 @@ export default function ClientsShow({
                 credentials: 'same-origin',
             });
 
-            const data = (await response.json()) as
-                | RevealedCredential
-                | { message?: string };
+            const data = (await response.json()) as RevealedCredential | { message?: string };
 
             if (!response.ok) {
-                setRevealError(
-                    'message' in data && data.message
-                        ? data.message
-                        : 'Nie można wyświetlić sekretu.',
-                );
+                setRevealError('message' in data && data.message ? data.message : t('revealErrorTitle'));
                 return;
             }
 
             setRevealed(data as RevealedCredential);
             setRevealOpen(true);
         } catch {
-            setRevealError(
-                'Nie można wyświetlić sekretu. Wystąpił błąd połączenia.',
-            );
+            setRevealError(t('revealErrorConnection'));
         } finally {
             setRevealLoading(false);
         }
     }
 
-    function handleDeleteCredential(credentialId: string) {
-        if (!confirm('Usunąć ten sekret?')) {
-            return;
-        }
-
+    function confirmDeleteCredential() {
+        if (!deleteCredential) return;
         router.delete(
-            ClientCredentialController.destroy.url({
-                client: client.id,
-                credential: credentialId,
-            }),
+            ClientCredentialController.destroy.url({ client: client.id, credential: deleteCredential.id }),
             { preserveScroll: true },
         );
     }
 
-    function handleDeleteClient() {
-        if (
-            !confirm(
-                `Usunąć klienta "${client.name}" i powiązane sekrety?`,
-            )
-        ) {
-            return;
-        }
-
+    function confirmDeleteClient() {
         router.delete(ClientController.destroy.url(client.id));
     }
 
@@ -129,27 +107,24 @@ export default function ClientsShow({
 
             <div className="flex h-full flex-1 flex-col gap-8 p-4">
                 <div className="flex flex-wrap items-start justify-between gap-4">
-                    <Heading
-                        title={client.name}
-                        description="Szczegóły klienta oraz sekrety z lokalnej listy metadata"
-                    />
-                    <Button variant="destructive" onClick={handleDeleteClient}>
+                    <Heading title={client.name} description={t('clientDetailsDescription')} />
+                    <Button variant="destructive" onClick={() => setDeleteClientOpen(true)}>
                         <Trash2 className="size-4" />
-                        Usuń klienta
+                        {t('deleteClient')}
                     </Button>
                 </div>
 
                 <section className="grid max-w-3xl gap-3 rounded-xl border p-4 text-sm">
                     <div>
-                        <span className="text-muted-foreground">Email: </span>
+                        <span className="text-muted-foreground">{tc('email')}: </span>
                         {client.email ?? '—'}
                     </div>
                     <div>
-                        <span className="text-muted-foreground">Phone: </span>
+                        <span className="text-muted-foreground">{tc('phone')}: </span>
                         {client.phone ?? '—'}
                     </div>
                     <div>
-                        <span className="text-muted-foreground">Notes: </span>
+                        <span className="text-muted-foreground">{tc('notes')}: </span>
                         {client.notes ?? '—'}
                     </div>
                 </section>
@@ -158,50 +133,38 @@ export default function ClientsShow({
                     <div className="flex flex-wrap items-start justify-between gap-4">
                         <Heading
                             variant="small"
-                            title="Credentials"
-                            description={`Lista z lokalnej bazy. Wartości wrażliwe odszyfrowywane dopiero po kliknięciu Show.`}
+                            title={t('credentialsTitle')}
+                            description={t('credentialsDescription')}
                         />
                         <Button type="button" onClick={() => setCreateOpen(true)}>
                             <Plus className="size-4" />
-                            Dodaj credential
+                            {t('addCredential')}
                         </Button>
                     </div>
 
                     {revealError && (
                         <Alert variant="destructive">
-                            <AlertTitle>Nie można wyświetlić sekretu</AlertTitle>
+                            <AlertTitle>{t('revealErrorTitle')}</AlertTitle>
                             <AlertDescription>{revealError}</AlertDescription>
                         </Alert>
                     )}
 
                     {credentials.length === 0 ? (
-                        <p className="text-sm text-muted-foreground">
-                            Brak sekretów dla tego
-                            klienta.
-                        </p>
+                        <p className="text-sm text-muted-foreground">{t('noCredentials')}</p>
                     ) : (
                         <div className="overflow-hidden rounded-xl border">
                             <table className="w-full text-left text-sm">
                                 <thead className="border-b bg-muted/40">
                                     <tr>
-                                        <th className="px-4 py-3 font-medium">
-                                            Nazwa
-                                        </th>
-                                        <th className="px-4 py-3 font-medium">
-                                            Opis
-                                        </th>
-                                        <th className="px-4 py-3 font-medium">
-                                            Typ
-                                        </th>
+                                        <th className="px-4 py-3 font-medium">{tc('name')}</th>
+                                        <th className="px-4 py-3 font-medium">{tc('description')}</th>
+                                        <th className="px-4 py-3 font-medium">{t('credTableHeadType')}</th>
                                         <th className="px-4 py-3 font-medium" />
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {credentials.map((credential) => (
-                                        <tr
-                                            key={credential.id}
-                                            className="border-b last:border-0"
-                                        >
+                                        <tr key={credential.id} className="border-b last:border-0">
                                             <td className="px-4 py-3 font-medium">
                                                 <span className="inline-flex items-center gap-2">
                                                     <KeyRound className="size-4 text-muted-foreground" />
@@ -221,24 +184,16 @@ export default function ClientsShow({
                                                         variant="outline"
                                                         size="sm"
                                                         disabled={revealLoading}
-                                                        onClick={() =>
-                                                            handleReveal(
-                                                                credential.id,
-                                                            )
-                                                        }
+                                                        onClick={() => handleReveal(credential.id)}
                                                     >
                                                         <Eye className="size-4" />
-                                                        Show
+                                                        {tc('show')}
                                                     </Button>
                                                     <Button
                                                         type="button"
                                                         variant="ghost"
                                                         size="sm"
-                                                        onClick={() =>
-                                                            handleDeleteCredential(
-                                                                credential.id,
-                                                            )
-                                                        }
+                                                        onClick={() => setDeleteCredential(credential)}
                                                     >
                                                         <Trash2 className="size-4" />
                                                     </Button>
@@ -263,11 +218,25 @@ export default function ClientsShow({
                 open={revealOpen}
                 onOpenChange={(open) => {
                     setRevealOpen(open);
-                    if (!open) {
-                        setRevealed(null);
-                    }
+                    if (!open) setRevealed(null);
                 }}
                 credential={revealed}
+            />
+
+            <DeleteModal
+                open={deleteClientOpen}
+                onOpenChange={setDeleteClientOpen}
+                title={t('deleteClientConfirmTitle')}
+                description={t('deleteClientConfirmDescription', { name: client.name })}
+                onConfirm={confirmDeleteClient}
+            />
+
+            <DeleteModal
+                open={deleteCredential !== null}
+                onOpenChange={(open) => { if (!open) setDeleteCredential(null); }}
+                title={t('deleteCredentialConfirmTitle')}
+                description={t('deleteCredentialConfirmDescription', { name: deleteCredential?.name ?? '' })}
+                onConfirm={confirmDeleteCredential}
             />
         </>
     );

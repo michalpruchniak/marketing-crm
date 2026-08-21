@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Check, Copy } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
-import { Copy, Check } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 type RevealedCredential = {
     id: string;
@@ -19,11 +20,10 @@ type Props = {
     credential: RevealedCredential | null;
 };
 
-export default function RevealCredentialModal({
-    open,
-    onOpenChange,
-    credential,
-}: Props) {
+export default function RevealCredentialModal({ open, onOpenChange, credential }: Props) {
+    const { t } = useTranslation('clients');
+    const { t: tc } = useTranslation('common');
+
     const [copiedLogin, setCopiedLogin] = useState(false);
     const [copiedPassword, setCopiedPassword] = useState(false);
     const [copiedUrl, setCopiedUrl] = useState(false);
@@ -48,16 +48,10 @@ export default function RevealCredentialModal({
     }
 
     return (
-        <Dialog
-            open={open}
-            onOpenChange={(o) => {
-                onOpenChange(o);
-                if (!o) return;
-            }}
-        >
+        <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>{credential?.name ?? 'Credential'}</DialogTitle>
+                    <DialogTitle>{credential?.name ?? t('revealModalTitle')}</DialogTitle>
                 </DialogHeader>
 
                 {credential && (
@@ -85,7 +79,7 @@ export default function RevealCredentialModal({
                         )}
 
                         <div>
-                            <div className="text-muted-foreground">Login</div>
+                            <div className="text-muted-foreground">{tc('login')}</div>
                             <div className="flex items-center justify-between font-mono">
                                 <div className="truncate">{credential.login}</div>
                                 <Button size="sm" variant="ghost" onClick={() => copyText(credential.login, setCopiedLogin)}>
@@ -95,7 +89,7 @@ export default function RevealCredentialModal({
                         </div>
 
                         <div>
-                            <div className="text-muted-foreground">Hasło</div>
+                            <div className="text-muted-foreground">{tc('password')}</div>
                             <div className="flex items-center justify-between font-mono">
                                 <div className="truncate">{credential.password}</div>
                                 <Button size="sm" variant="ghost" onClick={() => copyText(credential.password, setCopiedPassword)}>
@@ -106,7 +100,7 @@ export default function RevealCredentialModal({
 
                         {credential.additional_information && (
                             <div>
-                                <div className="text-muted-foreground">Dodatkowe informacje</div>
+                                <div className="text-muted-foreground">{tc('additionalInformation')}</div>
                                 <div className="whitespace-pre-wrap font-mono">{credential.additional_information}</div>
                             </div>
                         )}
