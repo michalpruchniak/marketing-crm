@@ -24,7 +24,7 @@ class CredentialService implements CredentialServiceInterface
         private readonly PasswordSecretStrategyFactory $factory,
     ) {}
 
-    public function listForClient(string $clientId): Collection
+    public function allForClient(string $clientId): Collection
     {
         return $this->credentials->forClientAndType(
             clientId: $clientId,

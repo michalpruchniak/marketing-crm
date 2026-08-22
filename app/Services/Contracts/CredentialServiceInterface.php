@@ -14,7 +14,7 @@ interface CredentialServiceInterface
     /**
      * @return Collection<int, Credential>
      */
-    public function listForClient(string $clientId): Collection;
+    public function allForClient(string $clientId): Collection;
 
     public function store(StoreCredentialDTO $data): Credential;
 

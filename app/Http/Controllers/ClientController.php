@@ -44,7 +44,7 @@ class ClientController extends Controller
 
     public function show(Client $client): Response
     {
-        $credentials = $this->credentialService->listForClient($client->id);
+        $credentials = $this->credentialService->allForClient($client->id);
 
         return Inertia::render('clients/show', [
             'client' => $client,

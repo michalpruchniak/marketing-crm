@@ -2,7 +2,9 @@
 
 namespace App\Http\DTO;
 
-final readonly class RevealedCredentialDTO
+use Illuminate\Contracts\Support\Arrayable;
+
+final readonly class RevealedCredentialDTO implements Arrayable
 {
     public function __construct(
         public string $id,
@@ -13,4 +15,17 @@ final readonly class RevealedCredentialDTO
         public ?string $additionalInformation = null,
         public ?string $url = null,
     ) {}
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'description' => $this->description,
+            'login' => $this->login,
+            'password' => $this->password,
+            'additional_information' => $this->additionalInformation,
+            'url' => $this->url,
+        ];
+    }
 }

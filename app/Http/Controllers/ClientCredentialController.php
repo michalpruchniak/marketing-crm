@@ -51,15 +51,7 @@ class ClientCredentialController extends Controller
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        return response()->json([
-            'id' => $payload->id,
-            'name' => $payload->name,
-            'description' => $payload->description,
-            'login' => $payload->login,
-            'password' => $payload->password,
-            'additional_information' => $payload->additionalInformation,
-            'url' => $payload->url,
-        ]);
+        return response()->json($payload->toArray());
     }
 
     public function destroy(Client $client, string $credential): RedirectResponse
