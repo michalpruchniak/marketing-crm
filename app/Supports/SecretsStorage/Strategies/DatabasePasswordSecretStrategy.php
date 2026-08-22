@@ -2,10 +2,10 @@
 
 namespace App\Supports\SecretsStorage\Strategies;
 
+use App\Http\DTO\SecretPayloadDTO;
 use App\Models\CredentialPayload;
 use App\Repositories\Contracts\CredentialPayloadRepositoryInterface;
 use App\Supports\SecretsStorage\Contracts\PasswordSecretStrategyInterface;
-use App\Http\DTO\SecretPayloadDTO;
 use RuntimeException;
 
 final class DatabasePasswordSecretStrategy implements PasswordSecretStrategyInterface
@@ -14,6 +14,10 @@ final class DatabasePasswordSecretStrategy implements PasswordSecretStrategyInte
         private readonly CredentialPayloadRepositoryInterface $payloads,
     ) {}
 
+    /**
+     * @param  string  $uuid
+     * @param  SecretPayloadDTO  $payload
+     */
     public function store(string $uuid, SecretPayloadDTO $payload): void
     {
         $this->payloads->upsertEncrypted(
@@ -22,11 +26,22 @@ final class DatabasePasswordSecretStrategy implements PasswordSecretStrategyInte
         );
     }
 
+    /**
+     * @param  string  $uuid
+     *
+     * @throws RuntimeException
+     */
     public function remove(string $uuid): void
     {
         $this->payloads->deleteByUuid($uuid);
     }
 
+    /**
+     * @param  string  $uuid
+     * @return SecretPayloadDTO
+     *
+     * @throws RuntimeException when the secret cannot be retrieved
+     */
     public function reveal(string $uuid): SecretPayloadDTO
     {
         /** @var CredentialPayload|null $record */

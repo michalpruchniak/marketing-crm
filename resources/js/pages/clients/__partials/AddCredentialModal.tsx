@@ -1,5 +1,8 @@
 import { Form } from '@inertiajs/react';
 import { useTranslation } from 'react-i18next';
+import ClientCredentialController from '@/actions/App/Http/Controllers/ClientCredentialController';
+import InputError from '@/components/input-error';
+import PasswordInput from '@/components/password-input';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -11,9 +14,6 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import InputError from '@/components/input-error';
-import PasswordInput from '@/components/password-input';
-import ClientCredentialController from '@/actions/App/Http/Controllers/ClientCredentialController';
 
 type Props = {
     clientId: string;

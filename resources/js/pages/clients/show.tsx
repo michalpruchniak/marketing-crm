@@ -8,9 +8,9 @@ import DeleteModal from '@/components/delete-modal';
 import Heading from '@/components/heading';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
+import { index as clientsIndex } from '@/routes/clients';
 import AddCredentialModal from './__partials/AddCredentialModal';
 import RevealCredentialModal from './__partials/RevealCredentialModal';
-import { index as clientsIndex } from '@/routes/clients';
 
 type Client = {
     id: string;
@@ -77,6 +77,7 @@ export default function ClientsShow({
 
             if (!response.ok) {
                 setRevealError('message' in data && data.message ? data.message : t('revealErrorTitle'));
+
                 return;
             }
 
@@ -90,7 +91,10 @@ export default function ClientsShow({
     }
 
     function confirmDeleteCredential() {
-        if (!deleteCredential) return;
+        if (!deleteCredential) {
+            return;
+        }
+
         router.delete(
             ClientCredentialController.destroy.url({ client: client.id, credential: deleteCredential.id }),
             { preserveScroll: true },
@@ -99,6 +103,20 @@ export default function ClientsShow({
 
     function confirmDeleteClient() {
         router.delete(ClientController.destroy.url(client.id));
+    }
+
+    function handleRevealOpenChange(open: boolean) {
+        setRevealOpen(open);
+
+        if (!open) {
+            setRevealed(null);
+        }
+    }
+
+    function handleDeleteCredentialOpenChange(open: boolean) {
+        if (!open) {
+            setDeleteCredential(null);
+        }
     }
 
     return (
@@ -216,10 +234,7 @@ export default function ClientsShow({
 
             <RevealCredentialModal
                 open={revealOpen}
-                onOpenChange={(open) => {
-                    setRevealOpen(open);
-                    if (!open) setRevealed(null);
-                }}
+                onOpenChange={handleRevealOpenChange}
                 credential={revealed}
             />
 
@@ -233,7 +248,7 @@ export default function ClientsShow({
 
             <DeleteModal
                 open={deleteCredential !== null}
-                onOpenChange={(open) => { if (!open) setDeleteCredential(null); }}
+                onOpenChange={handleDeleteCredentialOpenChange}
                 title={t('deleteCredentialConfirmTitle')}
                 description={t('deleteCredentialConfirmDescription', { name: deleteCredential?.name ?? '' })}
                 onConfirm={confirmDeleteCredential}

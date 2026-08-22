@@ -11,6 +11,11 @@ use InvalidArgumentException;
 
 final class PasswordSecretStrategyFactory
 {
+    /**
+     * @return PasswordSecretStrategyInterface
+     *
+     * @throws InvalidArgumentException
+     */
     public function create(): PasswordSecretStrategyInterface
     {
         $resolved = SecretsDriver::tryFrom((string) config('secrets.driver'))
@@ -29,6 +34,11 @@ final class PasswordSecretStrategyFactory
         };
     }
 
+    /**
+     * @return SecretsDriver
+     *
+     * @throws InvalidArgumentException
+     */
     public function currentDriver(): SecretsDriver
     {
         return SecretsDriver::tryFrom((string) config('secrets.driver'))

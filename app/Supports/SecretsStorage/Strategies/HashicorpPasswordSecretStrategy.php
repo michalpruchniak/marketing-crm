@@ -2,9 +2,9 @@
 
 namespace App\Supports\SecretsStorage\Strategies;
 
+use App\Http\DTO\SecretPayloadDTO;
 use App\Supports\SecretsStorage\Clients\HashicorpVaultClient;
 use App\Supports\SecretsStorage\Contracts\PasswordSecretStrategyInterface;
-use App\Http\DTO\SecretPayloadDTO;
 use RuntimeException;
 use Throwable;
 
@@ -14,16 +14,31 @@ final class HashicorpPasswordSecretStrategy implements PasswordSecretStrategyInt
         private readonly HashicorpVaultClient $client,
     ) {}
 
+    /**
+     * @param  string  $uuid
+     * @param  SecretPayloadDTO  $payload
+     */
     public function store(string $uuid, SecretPayloadDTO $payload): void
     {
         $this->client->put($uuid, $payload->toArray());
     }
 
+    /**
+     * @param  string  $uuid
+     *
+     * @throws RuntimeException
+     */
     public function remove(string $uuid): void
     {
         $this->client->remove($uuid);
     }
 
+    /**
+     * @param  string  $uuid
+     * @return SecretPayloadDTO
+     *
+     * @throws RuntimeException when the secret cannot be retrieved
+     */
     public function reveal(string $uuid): SecretPayloadDTO
     {
         try {

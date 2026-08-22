@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
 import { Check, Copy } from 'lucide-react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -28,16 +28,21 @@ export default function RevealCredentialModal({ open, onOpenChange, credential }
     const [copiedPassword, setCopiedPassword] = useState(false);
     const [copiedUrl, setCopiedUrl] = useState(false);
 
-    useEffect(() => {
-        if (!open) {
+    function handleOpenChange(nextOpen: boolean) {
+        if (!nextOpen) {
             setCopiedLogin(false);
             setCopiedPassword(false);
             setCopiedUrl(false);
         }
-    }, [open]);
+
+        onOpenChange(nextOpen);
+    }
 
     async function copyText(text: string | undefined, set: (v: boolean) => void) {
-        if (!text) return;
+        if (!text) {
+            return;
+        }
+
         try {
             await navigator.clipboard.writeText(text);
             set(true);
@@ -48,7 +53,7 @@ export default function RevealCredentialModal({ open, onOpenChange, credential }
     }
 
     return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
+        <Dialog open={open} onOpenChange={handleOpenChange}>
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>{credential?.name ?? t('revealModalTitle')}</DialogTitle>

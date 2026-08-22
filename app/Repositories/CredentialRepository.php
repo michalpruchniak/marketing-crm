@@ -9,12 +9,17 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class CredentialRepository extends BaseRepository implements CredentialRepositoryInterface
 {
+    /**
+     * @return class-string<Credential>
+     */
     protected function modelClass(): string
     {
         return Credential::class;
     }
 
     /**
+     * @param  string  $clientId
+     * @param  string  $type
      * @param  list<string>  $columns
      * @return Collection<int, Credential>
      */
@@ -31,6 +36,13 @@ class CredentialRepository extends BaseRepository implements CredentialRepositor
         );
     }
 
+    /**
+     * @param  string  $clientId
+     * @param  string  $credentialId
+     * @return Credential
+     *
+     * @throws ModelNotFoundException
+     */
     public function findForClient(string $clientId, string $credentialId): Credential
     {
         /** @var Credential|null $credential */
@@ -49,6 +61,7 @@ class CredentialRepository extends BaseRepository implements CredentialRepositor
     }
 
     /**
+     * @param  string  $clientId
      * @param  list<string>  $columns
      * @return Collection<int, Credential>
      */

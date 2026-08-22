@@ -9,10 +9,14 @@ use Illuminate\Database\Eloquent\Model;
 
 abstract class BaseRepository implements RepositoryInterface
 {
-    /** @return class-string<Model> */
+    /**
+     * @return class-string<Model>
+     */
     abstract protected function modelClass(): string;
 
-    /** @return Builder<Model> */
+    /**
+     * @return Builder<Model>
+     */
     protected function newQuery(): Builder
     {
         /** @var Builder<Model> $query */
@@ -22,7 +26,9 @@ abstract class BaseRepository implements RepositoryInterface
     }
 
     /**
+     * @param  string|int  $id
      * @param  list<string>  $columns
+     * @return Model|null
      */
     public function find(string|int $id, array $columns = ['*']): ?Model
     {
@@ -30,7 +36,9 @@ abstract class BaseRepository implements RepositoryInterface
     }
 
     /**
+     * @param  string|int  $id
      * @param  list<string>  $columns
+     * @return Model
      */
     public function findOrFail(string|int $id, array $columns = ['*']): Model
     {
@@ -54,6 +62,7 @@ abstract class BaseRepository implements RepositoryInterface
     /**
      * @param  array<string, mixed>  $where
      * @param  list<string>  $columns
+     * @return Model|null
      */
     public function first(array $where = [], array $columns = ['*']): ?Model
     {
@@ -64,17 +73,26 @@ abstract class BaseRepository implements RepositoryInterface
 
     /**
      * @param  array<string, mixed>  $data
+     * @return Model
      */
     public function create(array $data): Model
     {
         return $this->newQuery()->create($data);
     }
 
+    /**
+     * @param  string|int  $id
+     * @return bool
+     */
     public function deleteById(string|int $id): bool
     {
         return (bool) $this->newQuery()->whereKey($id)->delete();
     }
 
+    /**
+     * @param  Model  $model
+     * @return bool
+     */
     public function deleteModel(Model $model): bool
     {
         return (bool) $model->delete();

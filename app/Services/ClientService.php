@@ -2,12 +2,13 @@
 
 namespace App\Services;
 
+use App\Http\DTO\StoreClientDTO;
 use App\Models\Client;
 use App\Repositories\Contracts\ClientRepositoryInterface;
 use App\Services\Contracts\ClientServiceInterface;
 use App\Services\Contracts\CredentialServiceInterface;
 use Illuminate\Database\Eloquent\Collection;
-use App\Http\DTO\StoreClientDTO;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class ClientService implements ClientServiceInterface
 {
@@ -16,8 +17,12 @@ class ClientService implements ClientServiceInterface
         private readonly CredentialServiceInterface $credentials,
     ) {}
 
+    /**
+     * @return Collection<int, Client>
+     */
     public function getAll(): Collection
     {
+        /** @var Collection<int, Client> */
         return $this->clients->get(orderBy: ['name' => 'asc'], columns: [
             'id',
             'name',
@@ -27,12 +32,22 @@ class ClientService implements ClientServiceInterface
         ]);
     }
 
+    /**
+     * @param  StoreClientDTO  $dto
+     * @return Client
+     */
     public function create(StoreClientDTO $dto): Client
     {
         /** @var Client */
         return $this->clients->create($dto->toArray());
     }
 
+    /**
+     * @param  string  $id
+     * @return Client
+     *
+     * @throws ModelNotFoundException
+     */
     public function findOrFail(string $id): Client
     {
         /** @var Client $client */
@@ -41,6 +56,9 @@ class ClientService implements ClientServiceInterface
         return $client;
     }
 
+    /**
+     * @param  Client  $client
+     */
     public function delete(Client $client): void
     {
         $this->credentials->deleteAllForClient($client);
