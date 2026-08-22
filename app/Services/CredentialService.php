@@ -47,17 +47,12 @@ class CredentialService implements CredentialServiceInterface
                 url: $data->url,
             ));
 
-            /** @var Credential $credential */
-            $credential = $this->credentials->create([
-                'client_id' => $data->clientId,
-                'user_id' => $data->userId,
-                'uuid' => $uuid,
-                'type' => $driver->value,
-                'name' => $data->name,
-                'description' => $data->description,
-            ]);
+            $credentialData = $data->toArray();
+            $credentialData['uuid'] = $uuid;
+            $credentialData['type'] = $driver->value;
 
-            return $credential;
+            /** @var Credential */
+            return $this->credentials->create($credentialData);
         });
     }
 

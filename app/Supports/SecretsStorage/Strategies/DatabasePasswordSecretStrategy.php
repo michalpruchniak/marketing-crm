@@ -18,12 +18,7 @@ final class DatabasePasswordSecretStrategy implements PasswordSecretStrategyInte
     {
         $this->payloads->upsertEncrypted(
             uuid: $uuid,
-            encryptedPayload: CredentialPayload::encryptPayload([
-                'login' => $payload->login,
-                'password' => $payload->password,
-                'additional_information' => $payload->additionalInformation,
-                'url' => $payload->url,
-            ]),
+            encryptedPayload: CredentialPayload::encryptPayload($payload->toArray()),
         );
     }
 
@@ -47,11 +42,6 @@ final class DatabasePasswordSecretStrategy implements PasswordSecretStrategyInte
             throw new RuntimeException('Nie można wyświetlić sekretu. Odszyfrowanie danych w lokalnej bazie nie powiodło się.');
         }
 
-        return new SecretPayloadDTO(
-            login: $payload['login'],
-            password: $payload['password'],
-            additionalInformation: $payload['additional_information'] ?? null,
-            url: $payload['url'] ?? null,
-        );
+        return SecretPayloadDTO::fromArray($payload);
     }
 }

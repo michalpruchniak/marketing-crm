@@ -16,12 +16,7 @@ final class HashicorpPasswordSecretStrategy implements PasswordSecretStrategyInt
 
     public function store(string $uuid, SecretPayloadDTO $payload): void
     {
-        $this->client->put($uuid, [
-            'login' => $payload->login,
-            'password' => $payload->password,
-            'additional_information' => $payload->additionalInformation,
-            'url' => $payload->url,
-        ]);
+        $this->client->put($uuid, $payload->toArray());
     }
 
     public function remove(string $uuid): void
@@ -43,13 +38,13 @@ final class HashicorpPasswordSecretStrategy implements PasswordSecretStrategyInt
             throw new RuntimeException('Nie można wyświetlić sekretu. Wpis nie został znaleziony w HashiCorp Vault.');
         }
 
-        return new SecretPayloadDTO(
-            login: (string) $secret['login'],
-            password: (string) $secret['password'],
-            additionalInformation: isset($secret['additional_information'])
+        return SecretPayloadDTO::fromArray([
+            'login' => (string) $secret['login'],
+            'password' => (string) $secret['password'],
+            'additional_information' => isset($secret['additional_information'])
                 ? (string) $secret['additional_information']
                 : null,
-            url: isset($secret['url']) ? (string) $secret['url'] : null,
-        );
+            'url' => isset($secret['url']) ? (string) $secret['url'] : null,
+        ]);
     }
 }

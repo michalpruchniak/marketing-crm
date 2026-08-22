@@ -7,6 +7,7 @@ use App\Repositories\Contracts\ClientRepositoryInterface;
 use App\Services\Contracts\ClientServiceInterface;
 use App\Services\Contracts\CredentialServiceInterface;
 use Illuminate\Database\Eloquent\Collection;
+use App\Http\DTO\StoreClientDTO;
 
 class ClientService implements ClientServiceInterface
 {
@@ -26,12 +27,10 @@ class ClientService implements ClientServiceInterface
         ]);
     }
 
-    public function create(array $data): Client
+    public function create(StoreClientDTO $dto): Client
     {
-        /** @var Client $client */
-        $client = $this->clients->create($data);
-
-        return $client;
+        /** @var Client */
+        return $this->clients->create($dto->toArray());
     }
 
     public function findOrFail(string $id): Client

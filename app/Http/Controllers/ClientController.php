@@ -9,7 +9,6 @@ use App\Services\Contracts\CredentialServiceInterface;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
-
 class ClientController extends Controller
 {
     public function __construct(
@@ -33,7 +32,7 @@ class ClientController extends Controller
 
     public function store(StoreClientRequest $request): RedirectResponse
     {
-        $client = $this->clientService->create($request->validated());
+        $client = $this->clientService->create($request->getDTO());
 
         Inertia::flash('toast', [
             'type' => 'success',
