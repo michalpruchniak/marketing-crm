@@ -10,8 +10,8 @@ use Illuminate\Contracts\Support\Arrayable;
 final readonly class SecretPayloadDTO implements Arrayable
 {
     public function __construct(
-        public string $login,
-        public string $password,
+        public ?string $login,
+        public ?string $password,
         public ?string $additionalInformation = null,
         public ?string $url = null,
     ) {}
