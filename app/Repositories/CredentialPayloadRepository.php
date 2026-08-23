@@ -7,17 +7,14 @@ use App\Repositories\Contracts\CredentialPayloadRepositoryInterface;
 
 class CredentialPayloadRepository extends BaseRepository implements CredentialPayloadRepositoryInterface
 {
-    /**
-     * @return class-string<CredentialPayload>
-     */
-    protected function modelClass(): string
+    public function __construct(CredentialPayload $model)
     {
-        return CredentialPayload::class;
+        parent::__construct($model);
     }
 
     public function upsertEncrypted(string $uuid, string $encryptedPayload): void
     {
-        CredentialPayload::query()->updateOrCreate(
+        $this->newQuery()->updateOrCreate(
             ['uuid' => $uuid],
             ['encrypted_payload' => $encryptedPayload],
         );
@@ -25,6 +22,6 @@ class CredentialPayloadRepository extends BaseRepository implements CredentialPa
 
     public function deleteByUuid(string $uuid): bool
     {
-        return (bool) CredentialPayload::query()->whereKey($uuid)->delete();
+        return (bool) $this->newQuery()->whereKey($uuid)->delete();
     }
 }

@@ -36,15 +36,7 @@ interface RepositoryInterface
      */
     public function create(array $data): Model;
 
-    /**
-     * @param string|int $id
-     * @return bool
-     */
     public function deleteById(string|int $id): bool;
 
-     /**
-    * @param Model $model
-    * @return bool
-    */
     public function deleteModel(Model $model): bool;
 }

@@ -7,8 +7,8 @@ use App\Repositories\Contracts\ClientRepositoryInterface;
 
 class ClientRepository extends BaseRepository implements ClientRepositoryInterface
 {
-    protected function modelClass(): string
+    public function __construct(Client $model)
     {
-        return Client::class;
+        parent::__construct($model);
     }
 }

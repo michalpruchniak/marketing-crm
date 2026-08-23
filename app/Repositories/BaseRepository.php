@@ -9,20 +9,16 @@ use Illuminate\Database\Eloquent\Model;
 
 abstract class BaseRepository implements RepositoryInterface
 {
-    /**
-     * @return class-string<Model>
-     */
-    abstract protected function modelClass(): string;
+    public function __construct(
+        protected Model $model,
+    ) {}
 
     /**
      * @return Builder<Model>
      */
     protected function newQuery(): Builder
     {
-        /** @var Builder<Model> $query */
-        $query = ($this->modelClass())::query();
-
-        return $query;
+        return $this->model->newQuery();
     }
 
     /**
@@ -71,7 +67,7 @@ abstract class BaseRepository implements RepositoryInterface
      */
     public function create(array $data): Model
     {
-        return $this->newQuery()->create($data);
+        return $this->model->create($data);
     }
 
     public function deleteById(string|int $id): bool

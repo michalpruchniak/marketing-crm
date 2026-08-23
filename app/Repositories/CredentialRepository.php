@@ -9,12 +9,9 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class CredentialRepository extends BaseRepository implements CredentialRepositoryInterface
 {
-    /**
-     * @return class-string<Credential>
-     */
-    protected function modelClass(): string
+    public function __construct(Credential $model)
     {
-        return Credential::class;
+        parent::__construct($model);
     }
 
     /**
