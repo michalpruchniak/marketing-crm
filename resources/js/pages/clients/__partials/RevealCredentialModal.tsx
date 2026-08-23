@@ -2,7 +2,12 @@ import { Check, Copy } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
 
 type RevealedCredential = {
     id: string;
@@ -20,7 +25,11 @@ type Props = {
     credential: RevealedCredential | null;
 };
 
-export default function RevealCredentialModal({ open, onOpenChange, credential }: Props) {
+export default function RevealCredentialModal({
+    open,
+    onOpenChange,
+    credential,
+}: Props) {
     const { t } = useTranslation('clients');
     const { t: tc } = useTranslation('common');
 
@@ -38,7 +47,10 @@ export default function RevealCredentialModal({ open, onOpenChange, credential }
         onOpenChange(nextOpen);
     }
 
-    async function copyText(text: string | undefined, set: (v: boolean) => void) {
+    async function copyText(
+        text: string | undefined,
+        set: (v: boolean) => void,
+    ) {
         if (!text) {
             return;
         }
@@ -56,7 +68,9 @@ export default function RevealCredentialModal({ open, onOpenChange, credential }
         <Dialog open={open} onOpenChange={handleOpenChange}>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>{credential?.name ?? t('revealModalTitle')}</DialogTitle>
+                    <DialogTitle>
+                        {credential?.name ?? t('revealModalTitle')}
+                    </DialogTitle>
                 </DialogHeader>
 
                 {credential && (
@@ -76,37 +90,84 @@ export default function RevealCredentialModal({ open, onOpenChange, credential }
                                 <Button
                                     size="sm"
                                     variant="ghost"
-                                    onClick={() => copyText(credential.url ?? '', setCopiedUrl)}
+                                    onClick={() =>
+                                        copyText(
+                                            credential.url ?? '',
+                                            setCopiedUrl,
+                                        )
+                                    }
                                 >
-                                    {copiedUrl ? <Check className="size-4" /> : <Copy className="size-4" />}
+                                    {copiedUrl ? (
+                                        <Check className="size-4" />
+                                    ) : (
+                                        <Copy className="size-4" />
+                                    )}
                                 </Button>
                             </div>
                         )}
 
                         <div>
-                            <div className="text-muted-foreground">{tc('login')}</div>
+                            <div className="text-muted-foreground">
+                                {tc('login')}
+                            </div>
                             <div className="flex items-center justify-between font-mono">
-                                <div className="truncate">{credential.login}</div>
-                                <Button size="sm" variant="ghost" onClick={() => copyText(credential.login, setCopiedLogin)}>
-                                    {copiedLogin ? <Check className="size-4" /> : <Copy className="size-4" />}
+                                <div className="truncate">
+                                    {credential.login}
+                                </div>
+                                <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    onClick={() =>
+                                        copyText(
+                                            credential.login,
+                                            setCopiedLogin,
+                                        )
+                                    }
+                                >
+                                    {copiedLogin ? (
+                                        <Check className="size-4" />
+                                    ) : (
+                                        <Copy className="size-4" />
+                                    )}
                                 </Button>
                             </div>
                         </div>
 
                         <div>
-                            <div className="text-muted-foreground">{tc('password')}</div>
+                            <div className="text-muted-foreground">
+                                {tc('password')}
+                            </div>
                             <div className="flex items-center justify-between font-mono">
-                                <div className="truncate">{credential.password}</div>
-                                <Button size="sm" variant="ghost" onClick={() => copyText(credential.password, setCopiedPassword)}>
-                                    {copiedPassword ? <Check className="size-4" /> : <Copy className="size-4" />}
+                                <div className="truncate">
+                                    {credential.password}
+                                </div>
+                                <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    onClick={() =>
+                                        copyText(
+                                            credential.password,
+                                            setCopiedPassword,
+                                        )
+                                    }
+                                >
+                                    {copiedPassword ? (
+                                        <Check className="size-4" />
+                                    ) : (
+                                        <Copy className="size-4" />
+                                    )}
                                 </Button>
                             </div>
                         </div>
 
                         {credential.additional_information && (
                             <div>
-                                <div className="text-muted-foreground">{tc('additionalInformation')}</div>
-                                <div className="whitespace-pre-wrap font-mono">{credential.additional_information}</div>
+                                <div className="text-muted-foreground">
+                                    {tc('additionalInformation')}
+                                </div>
+                                <div className="font-mono whitespace-pre-wrap">
+                                    {credential.additional_information}
+                                </div>
                             </div>
                         )}
                     </div>

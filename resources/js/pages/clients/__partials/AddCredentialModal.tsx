@@ -21,7 +21,11 @@ type Props = {
     onOpenChange: (open: boolean) => void;
 };
 
-export default function AddCredentialModal({ clientId, open, onOpenChange }: Props) {
+export default function AddCredentialModal({
+    clientId,
+    open,
+    onOpenChange,
+}: Props) {
     const { t } = useTranslation('clients');
     const { t: tc } = useTranslation('common');
 
@@ -54,7 +58,9 @@ export default function AddCredentialModal({ clientId, open, onOpenChange }: Pro
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="description">{tc('description')}</Label>
+                                <Label htmlFor="description">
+                                    {tc('description')}
+                                </Label>
                                 <Textarea
                                     id="description"
                                     name="description"
@@ -86,7 +92,9 @@ export default function AddCredentialModal({ clientId, open, onOpenChange }: Pro
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="password">{tc('password')}</Label>
+                                <Label htmlFor="password">
+                                    {tc('password')}
+                                </Label>
                                 <PasswordInput
                                     id="password"
                                     name="password"
@@ -103,13 +111,21 @@ export default function AddCredentialModal({ clientId, open, onOpenChange }: Pro
                                 <Textarea
                                     id="additional_information"
                                     name="additional_information"
-                                    placeholder={t('additionalInformationPlaceholder')}
+                                    placeholder={t(
+                                        'additionalInformationPlaceholder',
+                                    )}
                                 />
-                                <InputError message={errors.additional_information} />
+                                <InputError
+                                    message={errors.additional_information}
+                                />
                             </div>
 
                             <DialogFooter>
-                                <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={() => onOpenChange(false)}
+                                >
                                     {tc('cancel')}
                                 </Button>
                                 <Button type="submit" disabled={processing}>

@@ -10,7 +10,11 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import { index as clientsIndex, create as clientsCreate, show as clientsShow } from '@/routes/clients';
+import {
+    index as clientsIndex,
+    create as clientsCreate,
+    show as clientsShow,
+} from '@/routes/clients';
 
 type ClientListItem = {
     id: string;
@@ -20,7 +24,11 @@ type ClientListItem = {
     created_at: string | null;
 };
 
-export default function ClientsIndex({ clients }: { clients: ClientListItem[] }) {
+export default function ClientsIndex({
+    clients,
+}: {
+    clients: ClientListItem[];
+}) {
     const { t } = useTranslation('clients');
     const { t: tc } = useTranslation('common');
 
@@ -30,7 +38,10 @@ export default function ClientsIndex({ clients }: { clients: ClientListItem[] })
 
             <div className="flex h-full flex-1 flex-col gap-6 p-4">
                 <div className="flex items-start justify-between gap-4">
-                    <Heading title={t('pageTitle')} description={t('pageDescription')} />
+                    <Heading
+                        title={t('pageTitle')}
+                        description={t('pageDescription')}
+                    />
 
                     <Button asChild>
                         <Link href={clientsCreate()}>
@@ -47,11 +58,15 @@ export default function ClientsIndex({ clients }: { clients: ClientListItem[] })
                                 <Users className="size-5" />
                                 {t('noClientsTitle')}
                             </CardTitle>
-                            <CardDescription>{t('noClientsDescription')}</CardDescription>
+                            <CardDescription>
+                                {t('noClientsDescription')}
+                            </CardDescription>
                         </CardHeader>
                         <CardContent>
                             <Button asChild>
-                                <Link href={clientsCreate()}>{t('addClient')}</Link>
+                                <Link href={clientsCreate()}>
+                                    {t('addClient')}
+                                </Link>
                             </Button>
                         </CardContent>
                     </Card>
@@ -60,21 +75,44 @@ export default function ClientsIndex({ clients }: { clients: ClientListItem[] })
                         <table className="w-full text-left text-sm">
                             <thead className="border-b bg-muted/40">
                                 <tr>
-                                    <th className="px-4 py-3 font-medium">{tc('name')}</th>
-                                    <th className="px-4 py-3 font-medium">{tc('email')}</th>
-                                    <th className="px-4 py-3 font-medium">{tc('phone')}</th>
+                                    <th className="px-4 py-3 font-medium">
+                                        {tc('name')}
+                                    </th>
+                                    <th className="px-4 py-3 font-medium">
+                                        {tc('email')}
+                                    </th>
+                                    <th className="px-4 py-3 font-medium">
+                                        {tc('phone')}
+                                    </th>
                                     <th className="px-4 py-3 font-medium" />
                                 </tr>
                             </thead>
                             <tbody>
                                 {clients.map((client) => (
-                                    <tr key={client.id} className="border-b last:border-0">
-                                        <td className="px-4 py-3 font-medium">{client.name}</td>
-                                        <td className="px-4 py-3 text-muted-foreground">{client.email ?? '—'}</td>
-                                        <td className="px-4 py-3 text-muted-foreground">{client.phone ?? '—'}</td>
+                                    <tr
+                                        key={client.id}
+                                        className="border-b last:border-0"
+                                    >
+                                        <td className="px-4 py-3 font-medium">
+                                            {client.name}
+                                        </td>
+                                        <td className="px-4 py-3 text-muted-foreground">
+                                            {client.email ?? '—'}
+                                        </td>
+                                        <td className="px-4 py-3 text-muted-foreground">
+                                            {client.phone ?? '—'}
+                                        </td>
                                         <td className="px-4 py-3 text-right">
-                                            <Button variant="outline" size="sm" asChild>
-                                                <Link href={clientsShow(client.id)}>
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                asChild
+                                            >
+                                                <Link
+                                                    href={clientsShow(
+                                                        client.id,
+                                                    )}
+                                                >
                                                     {tc('open')}
                                                 </Link>
                                             </Button>

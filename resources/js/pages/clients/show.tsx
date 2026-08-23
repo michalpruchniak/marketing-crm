@@ -53,7 +53,8 @@ export default function ClientsShow({
     const [revealLoading, setRevealLoading] = useState(false);
     const [revealError, setRevealError] = useState<string | null>(null);
     const [deleteClientOpen, setDeleteClientOpen] = useState(false);
-    const [deleteCredential, setDeleteCredential] = useState<CredentialMeta | null>(null);
+    const [deleteCredential, setDeleteCredential] =
+        useState<CredentialMeta | null>(null);
 
     async function handleReveal(credentialId: string) {
         setRevealLoading(true);
@@ -73,10 +74,15 @@ export default function ClientsShow({
                 credentials: 'same-origin',
             });
 
-            const data = (await response.json()) as RevealedCredential | { message?: string };
+            const data = (await response.json()) as
+                RevealedCredential | { message?: string };
 
             if (!response.ok) {
-                setRevealError('message' in data && data.message ? data.message : t('revealErrorTitle'));
+                setRevealError(
+                    'message' in data && data.message
+                        ? data.message
+                        : t('revealErrorTitle'),
+                );
 
                 return;
             }
@@ -96,7 +102,10 @@ export default function ClientsShow({
         }
 
         router.delete(
-            ClientCredentialController.destroy.url({ client: client.id, credential: deleteCredential.id }),
+            ClientCredentialController.destroy.url({
+                client: client.id,
+                credential: deleteCredential.id,
+            }),
             { preserveScroll: true },
         );
     }
@@ -125,8 +134,14 @@ export default function ClientsShow({
 
             <div className="flex h-full flex-1 flex-col gap-8 p-4">
                 <div className="flex flex-wrap items-start justify-between gap-4">
-                    <Heading title={client.name} description={t('clientDetailsDescription')} />
-                    <Button variant="destructive" onClick={() => setDeleteClientOpen(true)}>
+                    <Heading
+                        title={client.name}
+                        description={t('clientDetailsDescription')}
+                    />
+                    <Button
+                        variant="destructive"
+                        onClick={() => setDeleteClientOpen(true)}
+                    >
                         <Trash2 className="size-4" />
                         {t('deleteClient')}
                     </Button>
@@ -134,15 +149,21 @@ export default function ClientsShow({
 
                 <section className="grid max-w-3xl gap-3 rounded-xl border p-4 text-sm">
                     <div>
-                        <span className="text-muted-foreground">{tc('email')}: </span>
+                        <span className="text-muted-foreground">
+                            {tc('email')}:{' '}
+                        </span>
                         {client.email ?? '—'}
                     </div>
                     <div>
-                        <span className="text-muted-foreground">{tc('phone')}: </span>
+                        <span className="text-muted-foreground">
+                            {tc('phone')}:{' '}
+                        </span>
                         {client.phone ?? '—'}
                     </div>
                     <div>
-                        <span className="text-muted-foreground">{tc('notes')}: </span>
+                        <span className="text-muted-foreground">
+                            {tc('notes')}:{' '}
+                        </span>
                         {client.notes ?? '—'}
                     </div>
                 </section>
@@ -154,7 +175,10 @@ export default function ClientsShow({
                             title={t('credentialsTitle')}
                             description={t('credentialsDescription')}
                         />
-                        <Button type="button" onClick={() => setCreateOpen(true)}>
+                        <Button
+                            type="button"
+                            onClick={() => setCreateOpen(true)}
+                        >
                             <Plus className="size-4" />
                             {t('addCredential')}
                         </Button>
@@ -168,21 +192,32 @@ export default function ClientsShow({
                     )}
 
                     {credentials.length === 0 ? (
-                        <p className="text-sm text-muted-foreground">{t('noCredentials')}</p>
+                        <p className="text-sm text-muted-foreground">
+                            {t('noCredentials')}
+                        </p>
                     ) : (
                         <div className="overflow-hidden rounded-xl border">
                             <table className="w-full text-left text-sm">
                                 <thead className="border-b bg-muted/40">
                                     <tr>
-                                        <th className="px-4 py-3 font-medium">{tc('name')}</th>
-                                        <th className="px-4 py-3 font-medium">{tc('description')}</th>
-                                        <th className="px-4 py-3 font-medium">{t('credTableHeadType')}</th>
+                                        <th className="px-4 py-3 font-medium">
+                                            {tc('name')}
+                                        </th>
+                                        <th className="px-4 py-3 font-medium">
+                                            {tc('description')}
+                                        </th>
+                                        <th className="px-4 py-3 font-medium">
+                                            {t('credTableHeadType')}
+                                        </th>
                                         <th className="px-4 py-3 font-medium" />
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {credentials.map((credential) => (
-                                        <tr key={credential.id} className="border-b last:border-0">
+                                        <tr
+                                            key={credential.id}
+                                            className="border-b last:border-0"
+                                        >
                                             <td className="px-4 py-3 font-medium">
                                                 <span className="inline-flex items-center gap-2">
                                                     <KeyRound className="size-4 text-muted-foreground" />
@@ -202,7 +237,11 @@ export default function ClientsShow({
                                                         variant="outline"
                                                         size="sm"
                                                         disabled={revealLoading}
-                                                        onClick={() => handleReveal(credential.id)}
+                                                        onClick={() =>
+                                                            handleReveal(
+                                                                credential.id,
+                                                            )
+                                                        }
                                                     >
                                                         <Eye className="size-4" />
                                                         {tc('show')}
@@ -211,7 +250,11 @@ export default function ClientsShow({
                                                         type="button"
                                                         variant="ghost"
                                                         size="sm"
-                                                        onClick={() => setDeleteCredential(credential)}
+                                                        onClick={() =>
+                                                            setDeleteCredential(
+                                                                credential,
+                                                            )
+                                                        }
                                                     >
                                                         <Trash2 className="size-4" />
                                                     </Button>
@@ -242,7 +285,9 @@ export default function ClientsShow({
                 open={deleteClientOpen}
                 onOpenChange={setDeleteClientOpen}
                 title={t('deleteClientConfirmTitle')}
-                description={t('deleteClientConfirmDescription', { name: client.name })}
+                description={t('deleteClientConfirmDescription', {
+                    name: client.name,
+                })}
                 onConfirm={confirmDeleteClient}
             />
 
@@ -250,7 +295,9 @@ export default function ClientsShow({
                 open={deleteCredential !== null}
                 onOpenChange={handleDeleteCredentialOpenChange}
                 title={t('deleteCredentialConfirmTitle')}
-                description={t('deleteCredentialConfirmDescription', { name: deleteCredential?.name ?? '' })}
+                description={t('deleteCredentialConfirmDescription', {
+                    name: deleteCredential?.name ?? '',
+                })}
                 onConfirm={confirmDeleteCredential}
             />
         </>

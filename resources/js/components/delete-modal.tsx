@@ -43,7 +43,10 @@ export default function DeleteModal({
                     <DialogDescription>{description}</DialogDescription>
                 </DialogHeader>
                 <DialogFooter>
-                    <Button variant="outline" onClick={() => onOpenChange(false)}>
+                    <Button
+                        variant="outline"
+                        onClick={() => onOpenChange(false)}
+                    >
                         {cancelLabel ?? tc('cancel')}
                     </Button>
                     <Button variant="destructive" onClick={handleConfirm}>

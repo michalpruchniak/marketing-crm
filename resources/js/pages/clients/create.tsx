@@ -7,7 +7,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { index as clientsIndex, create as clientsCreate } from '@/routes/clients';
+import {
+    index as clientsIndex,
+    create as clientsCreate,
+} from '@/routes/clients';
 
 export default function ClientsCreate() {
     const { t } = useTranslation('clients');
@@ -18,9 +21,15 @@ export default function ClientsCreate() {
             <Head title={t('createTitle')} />
 
             <div className="flex h-full flex-1 flex-col gap-6 p-4">
-                <Heading title={t('createTitle')} description={t('createDescription')} />
+                <Heading
+                    title={t('createTitle')}
+                    description={t('createDescription')}
+                />
 
-                <Form {...ClientController.store.form()} className="max-w-xl space-y-6">
+                <Form
+                    {...ClientController.store.form()}
+                    className="max-w-xl space-y-6"
+                >
                     {({ processing, errors }) => (
                         <>
                             <div className="grid gap-2">
@@ -71,7 +80,9 @@ export default function ClientsCreate() {
                                     {t('saveClient')}
                                 </Button>
                                 <Button variant="outline" asChild>
-                                    <Link href={clientsIndex()}>{tc('cancel')}</Link>
+                                    <Link href={clientsIndex()}>
+                                        {tc('cancel')}
+                                    </Link>
                                 </Button>
                             </div>
                         </>
