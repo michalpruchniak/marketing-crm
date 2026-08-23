@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class CredentialPayload extends Model
 {
     protected $primaryKey = 'uuid';
+
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $fillable = [
@@ -16,9 +18,6 @@ class CredentialPayload extends Model
         'encrypted_payload',
     ];
 
-    /**
-     * @return SecretPayloadDTO
-     */
     public function decryptedPayload(): SecretPayloadDTO
     {
         /** @var array{login: string, password: string, additional_information?: string|null, url?: string|null} $payload */
@@ -32,10 +31,6 @@ class CredentialPayload extends Model
         );
     }
 
-    /**
-     * @param  SecretPayloadDTO  $payload
-     * @return string
-     */
     public static function encryptPayload(SecretPayloadDTO $payload): string
     {
         return encrypt(
