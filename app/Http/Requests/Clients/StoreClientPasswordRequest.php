@@ -3,7 +3,9 @@
 namespace App\Http\Requests\Clients;
 
 use App\Http\DTO\StoreCredentialDTO;
+use App\Models\Client;
 use Illuminate\Foundation\Http\FormRequest;
+use LogicException;
 
 class StoreClientPasswordRequest extends FormRequest
 {
@@ -29,8 +31,14 @@ class StoreClientPasswordRequest extends FormRequest
 
     public function getDTO(): StoreCredentialDTO
     {
+        $client = $this->route('client');
+
+        if (! $client instanceof Client) {
+            throw new LogicException('The route is missing a bound client.');
+        }
+
         return new StoreCredentialDTO(
-            clientId: $this->route('client')->id,
+            clientId: $client->id,
             userId: (int) $this->user()->id,
             name: $this->validated('name'),
             description: $this->validated('description'),

@@ -4,6 +4,9 @@ namespace App\Http\DTO;
 
 use Illuminate\Contracts\Support\Arrayable;
 
+/**
+ * @implements Arrayable<string, string|null>
+ */
 final readonly class SecretPayloadDTO implements Arrayable
 {
     public function __construct(
