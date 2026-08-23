@@ -15,10 +15,6 @@ class CredentialPayloadRepository extends BaseRepository implements CredentialPa
         return CredentialPayload::class;
     }
 
-    /**
-     * @param  string  $uuid
-     * @param  string  $encryptedPayload
-     */
     public function upsertEncrypted(string $uuid, string $encryptedPayload): void
     {
         CredentialPayload::query()->updateOrCreate(
@@ -27,10 +23,6 @@ class CredentialPayloadRepository extends BaseRepository implements CredentialPa
         );
     }
 
-    /**
-     * @param  string  $uuid
-     * @return bool
-     */
     public function deleteByUuid(string $uuid): bool
     {
         return (bool) CredentialPayload::query()->whereKey($uuid)->delete();

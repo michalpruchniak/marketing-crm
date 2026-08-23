@@ -12,8 +12,6 @@ use InvalidArgumentException;
 final class PasswordSecretStrategyFactory
 {
     /**
-     * @return PasswordSecretStrategyInterface
-     *
      * @throws InvalidArgumentException
      */
     public function create(): PasswordSecretStrategyInterface
@@ -35,8 +33,6 @@ final class PasswordSecretStrategyFactory
     }
 
     /**
-     * @return SecretsDriver
-     *
      * @throws InvalidArgumentException
      */
     public function currentDriver(): SecretsDriver

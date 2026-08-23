@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests\Clients;
 
-use Illuminate\Foundation\Http\FormRequest;
 use App\Http\DTO\StoreCredentialDTO;
+use Illuminate\Foundation\Http\FormRequest;
 
 class StoreClientPasswordRequest extends FormRequest
 {

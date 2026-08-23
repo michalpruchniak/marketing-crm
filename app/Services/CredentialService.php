@@ -25,7 +25,6 @@ class CredentialService implements CredentialServiceInterface
     ) {}
 
     /**
-     * @param  string  $clientId
      * @return Collection<int, Credential>
      */
     public function allForClient(string $clientId): Collection
@@ -38,10 +37,6 @@ class CredentialService implements CredentialServiceInterface
         );
     }
 
-    /**
-     * @param  StoreCredentialDTO  $data
-     * @return Credential
-     */
     public function store(StoreCredentialDTO $data): Credential
     {
         $driver = $this->factory->currentDriver();
@@ -66,10 +61,6 @@ class CredentialService implements CredentialServiceInterface
     }
 
     /**
-     * @param  Client  $client
-     * @param  string  $credentialId
-     * @return RevealedCredentialDTO
-     *
      * @throws RuntimeException
      */
     public function reveal(Client $client, string $credentialId): RevealedCredentialDTO
@@ -96,10 +87,6 @@ class CredentialService implements CredentialServiceInterface
         );
     }
 
-    /**
-     * @param  Client  $client
-     * @param  string  $credentialId
-     */
     public function delete(Client $client, string $credentialId): void
     {
         $credential = $this->credentials->findForClient($client->id, $credentialId);
@@ -111,9 +98,6 @@ class CredentialService implements CredentialServiceInterface
         });
     }
 
-    /**
-     * @param  Client  $client
-     */
     public function deleteAllForClient(Client $client): void
     {
         foreach ($this->credentials->allForClient($client->id) as $credential) {
@@ -129,9 +113,6 @@ class CredentialService implements CredentialServiceInterface
         }
     }
 
-    /**
-     * @return SecretsDriver
-     */
     public function currentDriver(): SecretsDriver
     {
         return $this->factory->currentDriver();

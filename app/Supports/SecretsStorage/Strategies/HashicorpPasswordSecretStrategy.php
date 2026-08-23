@@ -14,18 +14,12 @@ final class HashicorpPasswordSecretStrategy implements PasswordSecretStrategyInt
         private readonly HashicorpVaultClient $client,
     ) {}
 
-    /**
-     * @param  string  $uuid
-     * @param  SecretPayloadDTO  $payload
-     */
     public function store(string $uuid, SecretPayloadDTO $payload): void
     {
         $this->client->put($uuid, $payload->toArray());
     }
 
     /**
-     * @param  string  $uuid
-     *
      * @throws RuntimeException
      */
     public function remove(string $uuid): void
@@ -34,9 +28,6 @@ final class HashicorpPasswordSecretStrategy implements PasswordSecretStrategyInt
     }
 
     /**
-     * @param  string  $uuid
-     * @return SecretPayloadDTO
-     *
      * @throws RuntimeException when the secret cannot be retrieved
      */
     public function reveal(string $uuid): SecretPayloadDTO

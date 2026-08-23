@@ -18,8 +18,6 @@ class CredentialRepository extends BaseRepository implements CredentialRepositor
     }
 
     /**
-     * @param  string  $clientId
-     * @param  string  $type
      * @param  list<string>  $columns
      * @return Collection<int, Credential>
      */
@@ -37,10 +35,6 @@ class CredentialRepository extends BaseRepository implements CredentialRepositor
     }
 
     /**
-     * @param  string  $clientId
-     * @param  string  $credentialId
-     * @return Credential
-     *
      * @throws ModelNotFoundException
      */
     public function findForClient(string $clientId, string $credentialId): Credential
@@ -61,7 +55,6 @@ class CredentialRepository extends BaseRepository implements CredentialRepositor
     }
 
     /**
-     * @param  string  $clientId
      * @param  list<string>  $columns
      * @return Collection<int, Credential>
      */

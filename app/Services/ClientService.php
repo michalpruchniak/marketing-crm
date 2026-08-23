@@ -32,10 +32,6 @@ class ClientService implements ClientServiceInterface
         ]);
     }
 
-    /**
-     * @param  StoreClientDTO  $dto
-     * @return Client
-     */
     public function create(StoreClientDTO $dto): Client
     {
         /** @var Client */
@@ -43,9 +39,6 @@ class ClientService implements ClientServiceInterface
     }
 
     /**
-     * @param  string  $id
-     * @return Client
-     *
      * @throws ModelNotFoundException
      */
     public function findOrFail(string $id): Client
@@ -56,9 +49,6 @@ class ClientService implements ClientServiceInterface
         return $client;
     }
 
-    /**
-     * @param  Client  $client
-     */
     public function delete(Client $client): void
     {
         $this->credentials->deleteAllForClient($client);

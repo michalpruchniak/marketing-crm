@@ -16,7 +16,6 @@ final class HashicorpVaultClient
     ) {}
 
     /**
-     * @param  string  $uuid
      * @param  array<string, mixed>  $data
      *
      * @throws RuntimeException
@@ -33,7 +32,6 @@ final class HashicorpVaultClient
     }
 
     /**
-     * @param  string  $uuid
      * @return array<string, mixed>|null
      *
      * @throws RuntimeException
@@ -57,8 +55,6 @@ final class HashicorpVaultClient
     }
 
     /**
-     * @param  string  $uuid
-     *
      * @throws RuntimeException
      */
     public function remove(string $uuid): void
@@ -70,9 +66,6 @@ final class HashicorpVaultClient
         }
     }
 
-    /**
-     * @return PendingRequest
-     */
     private function http(): PendingRequest
     {
         return Http::baseUrl(rtrim($this->address, '/'))
@@ -83,19 +76,11 @@ final class HashicorpVaultClient
             ->asJson();
     }
 
-    /**
-     * @param  string  $uuid
-     * @return string
-     */
     private function dataUrl(string $uuid): string
     {
         return '/v1/'.self::COLLECTION.'/data/'.$uuid;
     }
 
-    /**
-     * @param  string  $uuid
-     * @return string
-     */
     private function metadataUrl(string $uuid): string
     {
         return '/v1/'.self::COLLECTION.'/metadata/'.$uuid;

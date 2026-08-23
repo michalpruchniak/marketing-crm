@@ -36,9 +36,6 @@ class Credential extends Model
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * @return SecretsDriver
-     */
     public function driver(): SecretsDriver
     {
         return SecretsDriver::from($this->type);

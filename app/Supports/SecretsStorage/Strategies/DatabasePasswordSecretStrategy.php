@@ -14,10 +14,6 @@ final class DatabasePasswordSecretStrategy implements PasswordSecretStrategyInte
         private readonly CredentialPayloadRepositoryInterface $payloads,
     ) {}
 
-    /**
-     * @param  string  $uuid
-     * @param  SecretPayloadDTO  $payload
-     */
     public function store(string $uuid, SecretPayloadDTO $payload): void
     {
         $this->payloads->upsertEncrypted(
@@ -27,8 +23,6 @@ final class DatabasePasswordSecretStrategy implements PasswordSecretStrategyInte
     }
 
     /**
-     * @param  string  $uuid
-     *
      * @throws RuntimeException
      */
     public function remove(string $uuid): void
@@ -37,9 +31,6 @@ final class DatabasePasswordSecretStrategy implements PasswordSecretStrategyInte
     }
 
     /**
-     * @param  string  $uuid
-     * @return SecretPayloadDTO
-     *
      * @throws RuntimeException when the secret cannot be retrieved
      */
     public function reveal(string $uuid): SecretPayloadDTO
