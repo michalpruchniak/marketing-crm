@@ -14,19 +14,11 @@ abstract class BaseRepository implements RepositoryInterface
     ) {}
 
     /**
-     * @return Builder<Model>
-     */
-    protected function newQuery(): Builder
-    {
-        return $this->model->newQuery();
-    }
-
-    /**
      * @param  list<string>  $columns
      */
     public function find(string|int $id, array $columns = ['*']): ?Model
     {
-        return $this->newQuery()->find($id, $columns);
+        return $this->model->find($id, $columns);
     }
 
     /**
@@ -34,7 +26,7 @@ abstract class BaseRepository implements RepositoryInterface
      */
     public function findOrFail(string|int $id, array $columns = ['*']): Model
     {
-        return $this->newQuery()->findOrFail($id, $columns);
+        return $this->model->findOrFail($id, $columns);
     }
 
     /**
@@ -45,10 +37,23 @@ abstract class BaseRepository implements RepositoryInterface
      */
     public function get(array $where = [], array $orderBy = [], array $columns = ['*']): Collection
     {
-        $query = $this->applyFilters($this->newQuery()->select($columns), $where);
+        $query = $this->applyFilters($this->model->select($columns), $where);
         $this->applyOrderBy($query, $orderBy);
 
         return $query->get();
+    }
+
+    /**
+     * @param  list<string>  $columns
+     * @return Collection<int, Credential>
+     */
+    public function allForClient(string $clientId, array $columns = ['*']): Collection
+    {
+        /** @var Collection<int, Credential> */
+        return $this->get(
+            where: ['client_id' => $clientId],
+            columns: $columns,
+        );
     }
 
     /**
@@ -57,7 +62,7 @@ abstract class BaseRepository implements RepositoryInterface
      */
     public function first(array $where = [], array $columns = ['*']): ?Model
     {
-        $query = $this->applyFilters($this->newQuery()->select($columns), $where);
+        $query = $this->applyFilters($this->model->select($columns), $where);
 
         return $query->first();
     }
@@ -72,7 +77,7 @@ abstract class BaseRepository implements RepositoryInterface
 
     public function deleteById(string|int $id): bool
     {
-        return (bool) $this->newQuery()->whereKey($id)->delete();
+        return (bool) $this->model->whereKey($id)->delete();
     }
 
     public function deleteModel(Model $model): bool
@@ -96,6 +101,20 @@ abstract class BaseRepository implements RepositoryInterface
         }
 
         return $query;
+    }
+
+    /**
+     * @param  array<string, mixed>  $where
+     * @param  array<string, mixed>  $data
+     */
+    public function updateOrCreate(array $where, array $data): Model
+    {
+        return $this->model->updateOrCreate($where, $data);
+    }
+
+    public function deleteByUuid(string $uuid): bool
+    {
+        return (bool) $this->model->whereKey($uuid)->delete();
     }
 
     /**

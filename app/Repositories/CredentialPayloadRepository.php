@@ -14,14 +14,9 @@ class CredentialPayloadRepository extends BaseRepository implements CredentialPa
 
     public function upsertEncrypted(string $uuid, string $encryptedPayload): void
     {
-        $this->newQuery()->updateOrCreate(
+        $this->updateOrCreate(
             ['uuid' => $uuid],
             ['encrypted_payload' => $encryptedPayload],
         );
-    }
-
-    public function deleteByUuid(string $uuid): bool
-    {
-        return (bool) $this->newQuery()->whereKey($uuid)->delete();
     }
 }

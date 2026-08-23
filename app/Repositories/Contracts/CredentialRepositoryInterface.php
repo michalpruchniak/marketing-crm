@@ -18,10 +18,4 @@ interface CredentialRepositoryInterface extends RepositoryInterface
      * @throws ModelNotFoundException
      */
     public function findForClient(string $clientId, string $credentialId): Credential;
-
-    /**
-     * @param  list<string>  $columns
-     * @return Collection<int, Credential>
-     */
-    public function allForClient(string $clientId, array $columns = ['*']): Collection;
 }

@@ -13,8 +13,8 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 class ClientService implements ClientServiceInterface
 {
     public function __construct(
-        private readonly ClientRepositoryInterface $clients,
-        private readonly CredentialServiceInterface $credentials,
+        private readonly ClientRepositoryInterface $clientsRepository,
+        private readonly CredentialServiceInterface $credentialsService,
     ) {}
 
     /**
@@ -23,7 +23,7 @@ class ClientService implements ClientServiceInterface
     public function getAll(): Collection
     {
         /** @var Collection<int, Client> */
-        return $this->clients->get(orderBy: ['name' => 'asc'], columns: [
+        return $this->clientsRepository->get(orderBy: ['name' => 'asc'], columns: [
             'id',
             'name',
             'email',
@@ -35,7 +35,7 @@ class ClientService implements ClientServiceInterface
     public function create(StoreClientDTO $dto): Client
     {
         /** @var Client */
-        return $this->clients->create($dto->toArray());
+        return $this->clientsRepository->create($dto->toArray());
     }
 
     /**
@@ -44,14 +44,14 @@ class ClientService implements ClientServiceInterface
     public function findOrFail(string $id): Client
     {
         /** @var Client $client */
-        $client = $this->clients->findOrFail($id);
+        $client = $this->clientsRepository->findOrFail($id);
 
         return $client;
     }
 
     public function delete(Client $client): void
     {
-        $this->credentials->deleteAllForClient($client);
-        $this->clients->deleteModel($client);
+        $this->credentialsService->deleteAllForClient($client);
+        $this->clientsRepository->deleteModel($client);
     }
 }

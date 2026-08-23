@@ -50,17 +50,4 @@ class CredentialRepository extends BaseRepository implements CredentialRepositor
 
         return $credential;
     }
-
-    /**
-     * @param  list<string>  $columns
-     * @return Collection<int, Credential>
-     */
-    public function allForClient(string $clientId, array $columns = ['*']): Collection
-    {
-        /** @var Collection<int, Credential> */
-        return $this->get(
-            where: ['client_id' => $clientId],
-            columns: $columns,
-        );
-    }
 }
