@@ -50,17 +50,13 @@ class CredentialRepository extends BaseRepository implements CredentialRepositor
     public function findForClient(string $clientId, string $credentialId, string $type): Credential
     {
         /** @var Credential|null $credential */
-        $credential = $this->first(
+        $credential = $this->firstOrFail(
             where: [
                 'client_id' => $clientId,
                 'id' => $credentialId,
                 'type' => $type,
             ],
         );
-
-        if ($credential === null) {
-            throw (new ModelNotFoundException)->setModel(Credential::class, [$credentialId]);
-        }
 
         return $credential;
     }

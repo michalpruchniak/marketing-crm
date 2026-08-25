@@ -21,26 +21,17 @@ final readonly class SecretPayloadDTO implements Arrayable
      */
     public static function fromArray(array $data): self
     {
-        if (! array_key_exists('login', $data) || ! array_key_exists('password', $data)) {
-            throw new \InvalidArgumentException('Secret payload must contain login and password.');
-        }
-
-        if (! is_string($data['login']) || ! is_string($data['password'])) {
-            throw new \InvalidArgumentException('Secret payload login and password must be strings.');
-        }
 
         return new self(
-            login: $data['login'],
-            password: $data['password'],
-            additionalInformation: isset($data['additional_information']) && is_string($data['additional_information'])
-                ? $data['additional_information']
-                : null,
-            url: isset($data['url']) && is_string($data['url']) ? $data['url'] : null,
+            login: isset($data['login']) && is_string($data['login']) ? $data['login'] : null,
+            password: isset($data['password']) && is_string($data['password']) ? $data['password'] : null,
+            additionalInformation: isset($data['additional_information']) && is_string($data['additional_information']) ? $data['additional_information'] : null,
+            url: isset($data['url']) ? $data['url'] : null,
         );
     }
 
     /**
-     * @return array{login: string, password: string, additional_information: string|null, url: string|null}
+     * @return array{login: string|null, password: string|null, additional_information: string|null, url: string|null}
      */
     public function toArray(): array
     {

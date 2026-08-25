@@ -39,11 +39,7 @@ final class DatabaseSecretStorageStrategy implements SecretStorageStrategyInterf
     public function reveal(string $uuid): array
     {
         /** @var CredentialPayload|null $credential */
-        $credential = $this->credentialPayloadRepository->first(['uuid' => $uuid]);
-
-        if ($credential === null) {
-            throw new RuntimeException('The secret cannot be displayed. The encrypted data was not found in the local database.');
-        }
+        $credential = $this->credentialPayloadRepository->firstOrFail(['uuid' => $uuid]);
 
         try {
             $payload = $credential->decryptedPayload();

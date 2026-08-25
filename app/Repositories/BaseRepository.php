@@ -55,6 +55,17 @@ abstract class BaseRepository implements RepositoryInterface
     }
 
     /**
+     * @param  array<string, mixed>  $where
+     * @param  list<string>  $columns
+     */
+    public function firstOrFail(array $where = [], array $columns = ['*']): ?Model
+    {
+        $query = $this->applyFilters($this->model->select($columns), $where);
+
+        return $query->firstOrFail();
+    }
+
+    /**
      * @param  array<string, mixed>  $data
      */
     public function create(array $data): Model

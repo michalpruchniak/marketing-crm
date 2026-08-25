@@ -14,8 +14,8 @@ final readonly class StoreCredentialDTO implements Arrayable
         public int $userId,
         public string $name,
         public ?string $description,
-        public string $login,
-        public string $password,
+        public ?string $login,
+        public ?string $password,
         public ?string $additionalInformation = null,
         public ?string $url = null,
     ) {}

@@ -13,8 +13,8 @@ final readonly class RevealedCredentialDTO implements Arrayable
         public string $id,
         public string $name,
         public ?string $description,
-        public string $login,
-        public string $password,
+        public ?string $login,
+        public ?string $password,
         public ?string $additionalInformation = null,
         public ?string $url = null,
     ) {}

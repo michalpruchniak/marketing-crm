@@ -8,9 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class CredentialPayload extends Model
 {
     protected $primaryKey = 'uuid';
-
     public $incrementing = false;
-
     protected $keyType = 'string';
 
     protected $fillable = [

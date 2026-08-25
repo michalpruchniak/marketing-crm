@@ -22,8 +22,8 @@ class StoreClientPasswordRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:2000'],
-            'login' => ['required', 'string', 'max:255'],
-            'password' => ['required', 'string', 'max:1000'],
+            'login' => ['nullable', 'string', 'max:255'],
+            'password' => ['nullable', 'string', 'max:1000'],
             'additional_information' => ['nullable', 'string', 'max:2000'],
             'url' => ['nullable', 'url', 'max:2048'],
         ];
