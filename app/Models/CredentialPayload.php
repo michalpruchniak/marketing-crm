@@ -20,7 +20,7 @@ class CredentialPayload extends Model
 
     public function decryptedPayload(): SecretPayloadDTO
     {
-        /** @var array{login: string, password: string, additional_information?: string|null, url?: string|null} $payload */
+        /** @var array{login?: string|null, password?: string|null, additional_information?: string|null, url?: string|null} $payload */
         $payload = json_decode(decrypt($this->encrypted_payload), true, 512, JSON_THROW_ON_ERROR);
 
         return new SecretPayloadDTO(
