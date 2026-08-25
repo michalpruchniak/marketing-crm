@@ -39,7 +39,7 @@ class CredentialRepository extends BaseRepository implements CredentialRepositor
                 'client_id' => $clientId,
                 'type' => $type,
             ],
-            orderBy: ['name' => 'asc'],
+            orderBy: ['created_at' => 'desc'],
             columns: $columns,
         );
     }

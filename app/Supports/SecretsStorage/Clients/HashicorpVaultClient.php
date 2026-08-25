@@ -2,12 +2,13 @@
 
 namespace App\Supports\SecretsStorage\Clients;
 
+use App\Http\DTO\SecretPayloadDTO;
+use App\Supports\SecretsStorage\Contracts\HashicorpVaultClientInterface;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
 use RuntimeException;
-use App\Http\DTO\SecretPayloadDTO;
 
-final class HashicorpVaultClient
+class HashicorpVaultClient implements HashicorpVaultClientInterface
 {
     private const MOUNT = 'credentials';
 
@@ -16,11 +17,6 @@ final class HashicorpVaultClient
         private readonly string $token,
     ) {}
 
-    /**
-     * @param  array<string, mixed>  $data
-     *
-     * @throws RuntimeException
-     */
     public function store(string $uuid, SecretPayloadDTO $payload): void
     {
         $response = $this->http()->post($this->dataUrl($uuid), [
@@ -32,11 +28,6 @@ final class HashicorpVaultClient
         }
     }
 
-    /**
-     * @return array<string, mixed>|null
-     *
-     * @throws RuntimeException
-     */
     public function get(string $uuid): ?array
     {
         $response = $this->http()->get($this->dataUrl($uuid));
@@ -55,10 +46,7 @@ final class HashicorpVaultClient
         return $data;
     }
 
-    /**
-     * @throws RuntimeException
-     */
-    public function remove(string $uuid): void
+    public function delete(string $uuid): void
     {
         $response = $this->http()->delete($this->metadataUrl($uuid));
 

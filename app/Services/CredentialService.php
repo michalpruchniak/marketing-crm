@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Http\DTO\RevealedCredentialDTO;
-use App\Http\DTO\SecretPayloadDTO;
 use App\Http\DTO\StoreCredentialDTO;
 use App\Models\Client;
 use App\Models\Credential;
@@ -14,6 +13,7 @@ use App\Supports\SecretsStorage\Enums\SecretsDriver;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;
+use Throwable;
 
 class CredentialService implements CredentialServiceInterface
 {
@@ -37,14 +37,20 @@ class CredentialService implements CredentialServiceInterface
 
     public function store(StoreCredentialDTO $data): Credential
     {
-        $storedSecretStorage = $this->passwordSecretStorage->store($data->toSecretPayloadDTO());
+        $storedSecret = $this->passwordSecretStorage->store($data->toSecretPayloadDTO());
 
-        return $this->credentialsRepository->create([
-            ...$data->toArray(),
-            'uuid' => $storedSecretStorage->uuid,
-            'type' => $storedSecretStorage->driver->value,
-        ]);
+        try {
+            /** @var Credential */
+            return DB::transaction(fn () => $this->credentialsRepository->create([
+                ...$data->toArray(),
+                'uuid' => $storedSecret->uuid,
+                'type' => $storedSecret->driver->value,
+            ]));
+        } catch (Throwable $exception) {
+            $this->passwordSecretStorage->delete($storedSecret->uuid, $storedSecret->driver);
 
+            throw $exception;
+        }
     }
 
     /**
@@ -71,7 +77,7 @@ class CredentialService implements CredentialServiceInterface
         $credential = $this->findCredentialForActiveDriver($client->id, $credentialId);
 
         DB::transaction(function () use ($credential): void {
-            $this->passwordSecretStorage->remove($credential->uuid, $credential->driver());
+            $this->passwordSecretStorage->delete($credential->uuid, $credential->driver());
             $this->credentialsRepository->delete($credential);
         });
     }
@@ -79,7 +85,7 @@ class CredentialService implements CredentialServiceInterface
     public function deleteAllForClient(Client $client): void
     {
         foreach ($this->credentialsRepository->allForClient($client->id) as $credential) {
-            $this->passwordSecretStorage->remove($credential->uuid, $credential->driver());
+            $this->passwordSecretStorage->delete($credential->uuid, $credential->driver());
             $this->credentialsRepository->delete($credential);
         }
     }

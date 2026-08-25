@@ -2,13 +2,14 @@
 
 namespace App\Supports\SecretsStorage\Factories;
 
+use App\Supports\SecretsStorage\Contracts\SecretsDriverStrategyFactoryInterface;
 use App\Supports\SecretsStorage\Contracts\SecretStorageStrategyInterface;
 use App\Supports\SecretsStorage\Enums\SecretsDriver;
 use App\Supports\SecretsStorage\Strategies\DatabaseSecretStorageStrategy;
 use App\Supports\SecretsStorage\Strategies\HashicorpSecretStorageStrategy;
 use InvalidArgumentException;
 
-final class SecretsDriverStrategyFactory
+class SecretsDriverStrategyFactory implements SecretsDriverStrategyFactoryInterface
 {
     public function create(): SecretStorageStrategyInterface
     {

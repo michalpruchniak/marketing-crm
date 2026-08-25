@@ -37,6 +37,4 @@ interface RepositoryInterface
     public function create(array $data): Model;
 
     public function delete(Model $model): bool;
-
-    public function deleteByUuid(string $uuid): bool;
 }

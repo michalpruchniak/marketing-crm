@@ -13,19 +13,17 @@ interface PasswordSecretStorageInterface
     public function currentDriver(): SecretsDriver;
 
     /**
-     * @template T
-     *
-     * @return T
-     *
      * @throws Throwable
      */
-        public function store(SecretPayloadDTO $payload): StoredSecret;
-
+    public function store(SecretPayloadDTO $payload): StoredSecret;
 
     /**
      * @throws RuntimeException
      */
     public function reveal(string $uuid): SecretPayloadDTO;
 
-    public function remove(string $uuid, SecretsDriver $driver): void;
+    /**
+     * @throws RuntimeException
+     */
+    public function delete(string $uuid, SecretsDriver $driver): void;
 }

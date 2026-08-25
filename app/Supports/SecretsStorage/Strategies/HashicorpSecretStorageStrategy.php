@@ -15,25 +15,20 @@ final class HashicorpSecretStorageStrategy implements SecretStorageStrategyInter
     ) {}
 
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      */
     public function store(string $uuid, array $payload): void
     {
         $this->client->store($uuid, SecretPayloadDTO::fromArray($payload));
     }
 
-    /**
-     * @throws RuntimeException
-     */
-    public function remove(string $uuid): void
+    public function delete(string $uuid): void
     {
-        $this->client->remove($uuid);
+        $this->client->delete($uuid);
     }
 
     /**
      * @return array<string, mixed>
-     *
-     * @throws RuntimeException when the secret cannot be retrieved
      */
     public function reveal(string $uuid): array
     {

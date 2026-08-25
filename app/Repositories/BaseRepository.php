@@ -94,11 +94,6 @@ abstract class BaseRepository implements RepositoryInterface
         return $this->model->updateOrCreate($where, $data);
     }
 
-    public function deleteByUuid(string $uuid): bool
-    {
-        return (bool) $this->model->whereKey($uuid)->delete();
-    }
-
     /**
      * @param  Builder<Model>  $query
      * @param  array<string, 'asc'|'desc'>  $orderBy

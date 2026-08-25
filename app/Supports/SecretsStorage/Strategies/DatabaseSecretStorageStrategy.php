@@ -25,18 +25,16 @@ final class DatabaseSecretStorageStrategy implements SecretStorageStrategyInterf
         );
     }
 
-    /**
-     * @throws RuntimeException
-     */
-    public function remove(string $uuid): void
+    public function delete(string $uuid): void
     {
-        $this->credentialPayloadRepository->deleteByUuid($uuid);
+        /** @var CredentialPayload $payload */
+        $payload = $this->credentialPayloadRepository->findOrFail($uuid);
+
+        $this->credentialPayloadRepository->delete($payload);
     }
 
     /**
      * @return array<string, mixed>
-     *
-     * @throws RuntimeException when the secret cannot be retrieved
      */
     public function reveal(string $uuid): array
     {
