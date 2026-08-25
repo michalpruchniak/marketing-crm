@@ -18,6 +18,19 @@ class CredentialRepository extends BaseRepository implements CredentialRepositor
      * @param  list<string>  $columns
      * @return Collection<int, Credential>
      */
+    public function allForClient(string $clientId, array $columns = ['*']): Collection
+    {
+        /** @var Collection<int, Credential> */
+        return $this->get(
+            where: ['client_id' => $clientId],
+            columns: $columns,
+        );
+    }
+
+    /**
+     * @param  list<string>  $columns
+     * @return Collection<int, Credential>
+     */
     public function forClientAndType(string $clientId, string $type, array $columns = ['*']): Collection
     {
         /** @var Collection<int, Credential> */
@@ -34,13 +47,14 @@ class CredentialRepository extends BaseRepository implements CredentialRepositor
     /**
      * @throws ModelNotFoundException
      */
-    public function findForClient(string $clientId, string $credentialId): Credential
+    public function findForClient(string $clientId, string $credentialId, string $type): Credential
     {
         /** @var Credential|null $credential */
         $credential = $this->first(
             where: [
                 'client_id' => $clientId,
                 'id' => $credentialId,
+                'type' => $type,
             ],
         );
 

@@ -9,19 +9,17 @@ use App\Models\Client;
 use App\Models\Credential;
 use App\Repositories\Contracts\CredentialRepositoryInterface;
 use App\Services\Contracts\CredentialServiceInterface;
+use App\Supports\SecretsStorage\Contracts\PasswordSecretStorageInterface;
 use App\Supports\SecretsStorage\Enums\SecretsDriver;
-use App\Supports\SecretsStorage\Factories\PasswordSecretStrategyFactory;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 use RuntimeException;
-use Throwable;
 
 class CredentialService implements CredentialServiceInterface
 {
     public function __construct(
         private readonly CredentialRepositoryInterface $credentialsRepository,
-        private readonly PasswordSecretStrategyFactory $passwordSecretStrategyFactory,
+        private readonly PasswordSecretStorageInterface $passwordSecretStorage,
     ) {}
 
     /**
@@ -32,32 +30,21 @@ class CredentialService implements CredentialServiceInterface
         /** @var Collection<int, Credential> */
         return $this->credentialsRepository->forClientAndType(
             clientId: $clientId,
-            type: $this->passwordSecretStrategyFactory->currentDriver()->value,
+            type: $this->passwordSecretStorage->currentDriver()->value,
             columns: ['id', 'client_id', 'user_id', 'uuid', 'type', 'name', 'description', 'created_at'],
         );
     }
 
     public function store(StoreCredentialDTO $data): Credential
     {
-        $driver = $this->passwordSecretStrategyFactory->currentDriver();
-        $uuid = hash('sha256', (string) Str::ulid());
-        $strategy = $this->passwordSecretStrategyFactory->create();
+        $storedSecretStorage = $this->passwordSecretStorage->store($data->toSecretPayloadDTO());
 
-        return DB::transaction(function () use ($data, $driver, $uuid, $strategy): Credential {
-            $strategy->store($uuid, new SecretPayloadDTO(
-                login: $data->login,
-                password: $data->password,
-                additionalInformation: $data->additionalInformation,
-                url: $data->url,
-            ));
+        return $this->credentialsRepository->create([
+            ...$data->toArray(),
+            'uuid' => $storedSecretStorage->uuid,
+            'type' => $storedSecretStorage->driver->value,
+        ]);
 
-            $credentialData = $data->toArray();
-            $credentialData['uuid'] = $uuid;
-            $credentialData['type'] = $driver->value;
-
-            /** @var Credential */
-            return $this->credentialsRepository->create($credentialData);
-        });
     }
 
     /**
@@ -65,16 +52,8 @@ class CredentialService implements CredentialServiceInterface
      */
     public function reveal(Client $client, string $credentialId): RevealedCredentialDTO
     {
-        $credential = $this->credentialsRepository->findForClient($client->id, $credentialId);
-        $strategy = $this->passwordSecretStrategyFactory->create();
-
-        try {
-            $payload = $strategy->reveal($credential->uuid);
-        } catch (RuntimeException $exception) {
-            throw $exception;
-        } catch (Throwable) {
-            throw new RuntimeException('Nie można wyświetlić sekretu. Wystąpił nieoczekiwany błąd podczas odczytu.');
-        }
+        $credential = $this->findCredentialForActiveDriver($client->id, $credentialId);
+        $payload = $this->passwordSecretStorage->reveal($credential->uuid);
 
         return new RevealedCredentialDTO(
             id: $credential->id,
@@ -89,32 +68,33 @@ class CredentialService implements CredentialServiceInterface
 
     public function delete(Client $client, string $credentialId): void
     {
-        $credential = $this->credentialsRepository->findForClient($client->id, $credentialId);
-        $strategy = $this->passwordSecretStrategyFactory->create();
+        $credential = $this->findCredentialForActiveDriver($client->id, $credentialId);
 
-        DB::transaction(function () use ($credential, $strategy): void {
-            $strategy->remove($credential->uuid);
-            $this->credentialsRepository->deleteModel($credential);
+        DB::transaction(function () use ($credential): void {
+            $this->passwordSecretStorage->remove($credential->uuid, $credential->driver());
+            $this->credentialsRepository->delete($credential);
         });
     }
 
     public function deleteAllForClient(Client $client): void
     {
         foreach ($this->credentialsRepository->allForClient($client->id) as $credential) {
-            $strategy = $this->passwordSecretStrategyFactory->create();
-
-            try {
-                $strategy->remove($credential->uuid);
-            } catch (Throwable) {
-                // Meta is removed even if remote payload is already gone.
-            }
-
-            $this->credentialsRepository->deleteModel($credential);
+            $this->passwordSecretStorage->remove($credential->uuid, $credential->driver());
+            $this->credentialsRepository->delete($credential);
         }
     }
 
     public function currentDriver(): SecretsDriver
     {
-        return $this->passwordSecretStrategyFactory->currentDriver();
+        return $this->passwordSecretStorage->currentDriver();
+    }
+
+    private function findCredentialForActiveDriver(string $clientId, string $credentialId): Credential
+    {
+        return $this->credentialsRepository->findForClient(
+            clientId: $clientId,
+            credentialId: $credentialId,
+            type: $this->passwordSecretStorage->currentDriver()->value,
+        );
     }
 }

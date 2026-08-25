@@ -5,10 +5,11 @@ namespace App\Supports\SecretsStorage\Clients;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
 use RuntimeException;
+use App\Http\DTO\SecretPayloadDTO;
 
 final class HashicorpVaultClient
 {
-    private const COLLECTION = 'credentials';
+    private const MOUNT = 'credentials';
 
     public function __construct(
         private readonly string $address,
@@ -20,10 +21,10 @@ final class HashicorpVaultClient
      *
      * @throws RuntimeException
      */
-    public function put(string $uuid, array $data): void
+    public function store(string $uuid, SecretPayloadDTO $payload): void
     {
         $response = $this->http()->post($this->dataUrl($uuid), [
-            'data' => $data,
+            'data' => $payload->toArray(),
         ]);
 
         if ($response->failed()) {
@@ -78,11 +79,11 @@ final class HashicorpVaultClient
 
     private function dataUrl(string $uuid): string
     {
-        return '/v1/'.self::COLLECTION.'/data/'.$uuid;
+        return '/v1/'.self::MOUNT.'/data/'.$uuid;
     }
 
     private function metadataUrl(string $uuid): string
     {
-        return '/v1/'.self::COLLECTION.'/metadata/'.$uuid;
+        return '/v1/'.self::MOUNT.'/metadata/'.$uuid;
     }
 }

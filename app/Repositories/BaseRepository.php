@@ -44,19 +44,6 @@ abstract class BaseRepository implements RepositoryInterface
     }
 
     /**
-     * @param  list<string>  $columns
-     * @return Collection<int, Credential>
-     */
-    public function allForClient(string $clientId, array $columns = ['*']): Collection
-    {
-        /** @var Collection<int, Credential> */
-        return $this->get(
-            where: ['client_id' => $clientId],
-            columns: $columns,
-        );
-    }
-
-    /**
      * @param  array<string, mixed>  $where
      * @param  list<string>  $columns
      */
@@ -75,12 +62,7 @@ abstract class BaseRepository implements RepositoryInterface
         return $this->model->create($data);
     }
 
-    public function deleteById(string|int $id): bool
-    {
-        return (bool) $this->model->whereKey($id)->delete();
-    }
-
-    public function deleteModel(Model $model): bool
+    public function delete(Model $model): bool
     {
         return (bool) $model->delete();
     }

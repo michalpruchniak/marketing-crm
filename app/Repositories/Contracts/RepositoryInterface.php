@@ -26,12 +26,6 @@ interface RepositoryInterface
     public function get(array $where = [], array $orderBy = [], array $columns = ['*']): Collection;
 
     /**
-     * @param  list<string>  $columns
-     * @return Collection<int, Model>
-     */
-    public function allForClient(string $clientId, array $columns = ['*']): Collection;
-
-    /**
      * @param  array<string, mixed>  $where
      * @param  list<string>  $columns
      */
@@ -42,9 +36,7 @@ interface RepositoryInterface
      */
     public function create(array $data): Model;
 
-    public function deleteById(string|int $id): bool;
-
-    public function deleteModel(Model $model): bool;
+    public function delete(Model $model): bool;
 
     public function deleteByUuid(string $uuid): bool;
 }

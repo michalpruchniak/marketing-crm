@@ -32,4 +32,14 @@ final readonly class StoreCredentialDTO implements Arrayable
             'description' => $this->description,
         ];
     }
+
+    public function toSecretPayloadDTO(): SecretPayloadDTO
+    {
+        return new SecretPayloadDTO(
+            login: $this->login,
+            password: $this->password,
+            additionalInformation: $this->additionalInformation,
+            url: $this->url,
+        );
+    }
 }

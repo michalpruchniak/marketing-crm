@@ -52,6 +52,6 @@ class ClientService implements ClientServiceInterface
     public function delete(Client $client): void
     {
         $this->credentialsService->deleteAllForClient($client);
-        $this->clientsRepository->deleteModel($client);
+        $this->clientsRepository->delete($client);
     }
 }

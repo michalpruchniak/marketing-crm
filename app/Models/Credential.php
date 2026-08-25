@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property SecretsDriver $type
+ */
 class Credential extends Model
 {
     use HasUlids;
@@ -19,6 +22,16 @@ class Credential extends Model
         'name',
         'description',
     ];
+
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'type' => SecretsDriver::class,
+        ];
+    }
 
     /**
      * @return BelongsTo<Client, $this>
@@ -38,6 +51,6 @@ class Credential extends Model
 
     public function driver(): SecretsDriver
     {
-        return SecretsDriver::from($this->type);
+        return $this->type;
     }
 }
