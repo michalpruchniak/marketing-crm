@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Http\DTO\SecretPayloadDTO;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Crypt;
 
 class CredentialPayload extends Model
 {
@@ -21,7 +22,12 @@ class CredentialPayload extends Model
     public function decryptedPayload(): SecretPayloadDTO
     {
         /** @var array{login?: string|null, password?: string|null, additional_information?: string|null, url?: string|null} $payload */
-        $payload = json_decode(decrypt($this->encrypted_payload), true, 512, JSON_THROW_ON_ERROR);
+        $payload = json_decode(
+            Crypt::decryptString($this->encrypted_payload),
+            true,
+            512,
+            JSON_THROW_ON_ERROR,
+        );
 
         return new SecretPayloadDTO(
             login: $payload['login'] ?? null,
@@ -33,7 +39,7 @@ class CredentialPayload extends Model
 
     public static function encryptPayload(SecretPayloadDTO $payload): string
     {
-        return encrypt(
+        return Crypt::encryptString(
             json_encode($payload->toArray(), JSON_THROW_ON_ERROR)
         );
     }
