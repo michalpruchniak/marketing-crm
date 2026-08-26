@@ -15,6 +15,7 @@ const en = {
         save: 'Save',
         cancel: 'Cancel',
         delete: 'Delete',
+        edit: 'Edit',
         open: 'Open',
         add: 'Add',
         show: 'Show',
@@ -29,6 +30,7 @@ const en = {
         noClientsDescription:
             'Create your first client to start storing credentials.',
         tableHeadPhone: 'Phone',
+        coordinator: 'Coordinator',
 
         // Create
         createTitle: 'Add client',
@@ -40,9 +42,10 @@ const en = {
         notesPlaceholder: 'Notes about this client',
         saveClient: 'Save client',
 
-        // Show
+        // Show / Edit
         clientDetailsDescription:
             'Client details and credentials from the local metadata list.',
+        editClientTitle: 'Edit client',
         deleteClient: 'Delete client',
         deleteClientConfirmTitle: 'Delete client',
         deleteClientConfirmDescription:

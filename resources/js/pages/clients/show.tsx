@@ -1,5 +1,5 @@
-import { Head, router } from '@inertiajs/react';
-import { Trash2 } from 'lucide-react';
+import { Head, router, usePage } from '@inertiajs/react';
+import { Pencil, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import ClientController from '@/actions/App/Http/Controllers/ClientController';
@@ -11,6 +11,7 @@ import { index as clientsIndex } from '@/routes/clients';
 import ClientDetailsSection from './__partials/ClientDetailsSection';
 import CredentialsSection from './__partials/CredentialsSection';
 import AddCredentialModal from './components/AddCredentialModal';
+import EditClientModal from './components/EditClientModal';
 import RevealCredentialModal from './components/RevealCredentialModal';
 import type { Client, CredentialMeta, RevealedCredential } from './types';
 
@@ -22,8 +23,12 @@ export default function ClientsShow({
     credentials: CredentialMeta[];
 }) {
     const { t } = useTranslation();
+    const { can } = usePage().props;
+    const canUpdate = can?.update ?? false;
+    const canDelete = can?.delete ?? false;
 
     const [createOpen, setCreateOpen] = useState(false);
+    const [editOpen, setEditOpen] = useState(false);
     const [revealed, setRevealed] = useState<RevealedCredential | null>(null);
     const [revealOpen, setRevealOpen] = useState(false);
     const [revealLoading, setRevealLoading] = useState(false);
@@ -114,13 +119,26 @@ export default function ClientsShow({
                         title={client.name}
                         description={t('clients.clientDetailsDescription')}
                     />
-                    <Button
-                        variant="destructive"
-                        onClick={() => setDeleteClientOpen(true)}
-                    >
-                        <Trash2 className="size-4" />
-                        {t('clients.deleteClient')}
-                    </Button>
+                    <div className="flex flex-wrap gap-2">
+                        {canUpdate && (
+                            <Button
+                                variant="outline"
+                                onClick={() => setEditOpen(true)}
+                            >
+                                <Pencil className="size-4" />
+                                {t('common.edit')}
+                            </Button>
+                        )}
+                        {canDelete && (
+                            <Button
+                                variant="destructive"
+                                onClick={() => setDeleteClientOpen(true)}
+                            >
+                                <Trash2 className="size-4" />
+                                {t('clients.deleteClient')}
+                            </Button>
+                        )}
+                    </div>
                 </div>
 
                 <ClientDetailsSection client={client} />
@@ -141,21 +159,31 @@ export default function ClientsShow({
                 onOpenChange={setCreateOpen}
             />
 
+            {canUpdate && (
+                <EditClientModal
+                    client={client}
+                    open={editOpen}
+                    onOpenChange={setEditOpen}
+                />
+            )}
+
             <RevealCredentialModal
                 open={revealOpen}
                 onOpenChange={handleRevealOpenChange}
                 credential={revealed}
             />
 
-            <DeleteModal
-                open={deleteClientOpen}
-                onOpenChange={setDeleteClientOpen}
-                title={t('clients.deleteClientConfirmTitle')}
-                description={t('clients.deleteClientConfirmDescription', {
-                    name: client.name,
-                })}
-                onConfirm={confirmDeleteClient}
-            />
+            {canDelete && (
+                <DeleteModal
+                    open={deleteClientOpen}
+                    onOpenChange={setDeleteClientOpen}
+                    title={t('clients.deleteClientConfirmTitle')}
+                    description={t('clients.deleteClientConfirmDescription', {
+                        name: client.name,
+                    })}
+                    onConfirm={confirmDeleteClient}
+                />
+            )}
 
             <DeleteModal
                 open={deleteCredential !== null}

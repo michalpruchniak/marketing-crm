@@ -1,9 +1,16 @@
+export type ClientCoordinator = {
+    id: number;
+    name: string;
+};
+
 export type Client = {
     id: string;
     name: string;
     email: string | null;
     phone: string | null;
     notes: string | null;
+    coordinator_id?: number | null;
+    coordinator?: ClientCoordinator | null;
 };
 
 export type CredentialMeta = {

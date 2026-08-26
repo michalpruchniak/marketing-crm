@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Client;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -42,6 +43,32 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
+            ...$this->clientPermissions($request),
+        ];
+    }
+
+    /**
+     * @return array{can: array{update: bool, delete: bool}}|array{}
+     */
+    private function clientPermissions(Request $request): array
+    {
+        if (! $request->routeIs('clients.show')) {
+            return [];
+        }
+
+        $client = $request->route('client');
+
+        if (! $client instanceof Client) {
+            return [];
+        }
+
+        $user = $request->user();
+
+        return [
+            'can' => [
+                'update' => $user?->can('update', $client) ?? false,
+                'delete' => $user?->can('delete', $client) ?? false,
+            ],
         ];
     }
 }

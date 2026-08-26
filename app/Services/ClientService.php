@@ -3,12 +3,15 @@
 namespace App\Services;
 
 use App\Http\DTO\StoreClientDTO;
+use App\Http\DTO\UpdateClientDTO;
 use App\Models\Client;
 use App\Repositories\Contracts\ClientRepositoryInterface;
 use App\Services\Contracts\ClientServiceInterface;
 use App\Services\Contracts\CredentialServiceInterface;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Auth;
+use LogicException;
 
 class ClientService implements ClientServiceInterface
 {
@@ -26,14 +29,22 @@ class ClientService implements ClientServiceInterface
      */
     public function getAll(): Collection
     {
+        $clients = $this->clientsRepository->get(
+            orderBy: ['name' => 'asc'],
+            columns: [
+                'id',
+                'name',
+                'email',
+                'phone',
+                'coordinator_id',
+                'created_at',
+            ],
+        );
+
+        $clients->load(['coordinator:id,name']);
+
         /** @var Collection<int, Client> */
-        return $this->clientsRepository->get(orderBy: ['name' => 'asc'], columns: [
-            'id',
-            'name',
-            'email',
-            'phone',
-            'created_at',
-        ]);
+        return $clients;
     }
 
     /**
@@ -42,8 +53,22 @@ class ClientService implements ClientServiceInterface
      */
     public function create(StoreClientDTO $dto): Client
     {
-        /** @var Client */
-        return $this->clientsRepository->create($dto->toArray());
+        $coordinatorId = Auth::id();
+
+        if ($coordinatorId === null) {
+            throw new LogicException('Authenticated user required to create a client.');
+        }
+
+        $client = $this->clientsRepository->create([
+            ...$dto->toArray(),
+            'coordinator_id' => $coordinatorId,
+        ]);
+
+        if (! $client instanceof Client) {
+            throw new LogicException('Expected Client model instance.');
+        }
+
+        return $client;
     }
 
     /**
@@ -54,8 +79,27 @@ class ClientService implements ClientServiceInterface
      */
     public function findOrFail(string $id): Client
     {
-        /** @var Client $client */
         $client = $this->clientsRepository->findOrFail($id);
+
+        if (! $client instanceof Client) {
+            throw new LogicException('Expected Client model instance.');
+        }
+
+        return $client;
+    }
+
+    /**
+     * @param  Client  $client
+     * @param  UpdateClientDTO  $dto
+     * @return Client
+     */
+    public function update(Client $client, UpdateClientDTO $dto): Client
+    {
+        $client = $this->clientsRepository->update($client, $dto->toArray());
+
+        if (! $client instanceof Client) {
+            throw new LogicException('Expected Client model instance.');
+        }
 
         return $client;
     }

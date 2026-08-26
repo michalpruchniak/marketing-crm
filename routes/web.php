@@ -14,6 +14,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         'create',
         'store',
         'show',
+        'update',
         'destroy',
     ]);
 

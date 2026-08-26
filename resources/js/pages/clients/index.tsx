@@ -1,4 +1,4 @@
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 import { Plus, Users } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import Heading from '@/components/heading';
@@ -10,26 +10,18 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
 import {
     index as clientsIndex,
     create as clientsCreate,
     show as clientsShow,
 } from '@/routes/clients';
+import type { Client } from './types';
 
-type ClientListItem = {
-    id: string;
-    name: string;
-    email: string | null;
-    phone: string | null;
-    created_at: string | null;
-};
-
-export default function ClientsIndex({
-    clients,
-}: {
-    clients: ClientListItem[];
-}) {
+export default function ClientsIndex({ clients }: { clients: Client[] }) {
     const { t } = useTranslation();
+    const { auth } = usePage().props;
+    const currentUserId = auth.user?.id ?? null;
 
     return (
         <>
@@ -83,41 +75,58 @@ export default function ClientsIndex({
                                     <th className="px-4 py-3 font-medium">
                                         {t('common.phone')}
                                     </th>
+                                    <th className="px-4 py-3 font-medium">
+                                        {t('clients.coordinator')}
+                                    </th>
                                     <th className="px-4 py-3 font-medium" />
                                 </tr>
                             </thead>
                             <tbody>
-                                {clients.map((client) => (
-                                    <tr
-                                        key={client.id}
-                                        className="border-b last:border-0"
-                                    >
-                                        <td className="px-4 py-3 font-medium">
-                                            {client.name}
-                                        </td>
-                                        <td className="px-4 py-3 text-muted-foreground">
-                                            {client.email ?? '—'}
-                                        </td>
-                                        <td className="px-4 py-3 text-muted-foreground">
-                                            {client.phone ?? '—'}
-                                        </td>
-                                        <td className="px-4 py-3 text-right">
-                                            <Button
-                                                variant="outline"
-                                                size="sm"
-                                                asChild
-                                            >
-                                                <Link
-                                                    href={clientsShow(
-                                                        client.id,
-                                                    )}
+                                {clients.map((client) => {
+                                    const isOwn =
+                                        currentUserId !== null &&
+                                        client.coordinator_id === currentUserId;
+
+                                    return (
+                                        <tr
+                                            key={client.id}
+                                            className={cn(
+                                                'border-b last:border-0',
+                                                isOwn &&
+                                                    'bg-amber-50/80 dark:bg-amber-950/30',
+                                            )}
+                                        >
+                                            <td className="px-4 py-3 font-medium">
+                                                {client.name}
+                                            </td>
+                                            <td className="px-4 py-3 text-muted-foreground">
+                                                {client.email ?? '—'}
+                                            </td>
+                                            <td className="px-4 py-3 text-muted-foreground">
+                                                {client.phone ?? '—'}
+                                            </td>
+                                            <td className="px-4 py-3 text-muted-foreground">
+                                                {client.coordinator?.name ??
+                                                    '—'}
+                                            </td>
+                                            <td className="px-4 py-3 text-right">
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
+                                                    asChild
                                                 >
-                                                    {t('common.open')}
-                                                </Link>
-                                            </Button>
-                                        </td>
-                                    </tr>
-                                ))}
+                                                    <Link
+                                                        href={clientsShow(
+                                                            client.id,
+                                                        )}
+                                                    >
+                                                        {t('common.open')}
+                                                    </Link>
+                                                </Button>
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
                             </tbody>
                         </table>
                     </div>

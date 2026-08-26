@@ -56,6 +56,13 @@ interface BaseRepositoryInterface
 
     /**
      * @param  Model  $model
+     * @param  array<string, mixed>  $data
+     * @return Model
+     */
+    public function update(Model $model, array $data): Model;
+
+    /**
+     * @param  Model  $model
      * @return bool
      */
     public function delete(Model $model): bool;
