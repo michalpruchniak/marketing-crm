@@ -20,9 +20,6 @@ final readonly class StoreCredentialDTO implements Arrayable
         public ?string $url = null,
     ) {}
 
-    /**
-     * @return array{client_id: string, user_id: int, name: string, description: string|null}
-     */
     public function toArray(): array
     {
         return [

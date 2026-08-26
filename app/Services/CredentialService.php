@@ -51,7 +51,6 @@ class CredentialService implements CredentialServiceInterface
         $storedSecret = $this->passwordSecretStorage->store($data->toSecretPayloadDTO());
 
         try {
-            /** @var Credential */
             return DB::transaction(fn () => $this->credentialsRepository->create([
                 ...$data->toArray(),
                 'uuid' => $storedSecret->uuid,

@@ -10,15 +10,21 @@ use App\Supports\SecretsStorage\ValueObjects\StoredSecret;
 use Illuminate\Support\Str;
 use RuntimeException;
 use Throwable;
+use App\Supports\SecretsStorage\Contracts\SecretStorageStrategyInterface;
 
 final class PasswordSecretStorage implements PasswordSecretStorageInterface
 {
+
+    private SecretStorageStrategyInterface $strategy;
+
     /**
      * @param  SecretsDriverStrategyFactory  $secretsDriverStrategyFactory
      */
     public function __construct(
         private readonly SecretsDriverStrategyFactory $secretsDriverStrategyFactory,
-    ) {}
+    ) {
+        $this->strategy = $this->secretsDriverStrategyFactory->create();
+    }
 
     /**
      * @return SecretsDriver
@@ -36,21 +42,19 @@ final class PasswordSecretStorage implements PasswordSecretStorageInterface
      */
     public function store(SecretPayloadDTO $payload): StoredSecret
     {
-        $driver = $this->currentDriver();
-        $strategy = $this->secretsDriverStrategyFactory->createFor($driver);
         $uuid = (string) Str::ulid();
 
         try {
-            $strategy->store($uuid, $payload->toArray());
+            $this->strategy->store($uuid, $payload->toArray());
         } catch (Throwable $exception) {
-            $strategy->delete($uuid);
+            $this->strategy->delete($uuid);
 
             throw $exception;
         }
 
         return new StoredSecret(
             uuid: $uuid,
-            driver: $driver,
+            driver: $this->currentDriver(),
         );
     }
 
@@ -62,9 +66,7 @@ final class PasswordSecretStorage implements PasswordSecretStorageInterface
      */
     public function reveal(string $uuid): SecretPayloadDTO
     {
-        $strategy = $this->secretsDriverStrategyFactory->create();
-
-        return SecretPayloadDTO::fromArray($strategy->reveal($uuid));
+        return SecretPayloadDTO::fromArray($this->strategy->reveal($uuid));
     }
 
     /**
@@ -76,6 +78,6 @@ final class PasswordSecretStorage implements PasswordSecretStorageInterface
      */
     public function delete(string $uuid, SecretsDriver $driver): void
     {
-        $this->secretsDriverStrategyFactory->createFor($driver)->delete($uuid);
+        $this->strategy->delete($uuid);
     }
 }
