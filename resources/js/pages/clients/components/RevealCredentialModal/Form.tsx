@@ -83,7 +83,9 @@ export default function RevealCredentialForm({ credential }: Props) {
             </div>
 
             <div>
-                <div className="text-muted-foreground">{t('common.password')}</div>
+                <div className="text-muted-foreground">
+                    {t('common.password')}
+                </div>
                 <div className="flex items-center justify-between font-mono">
                     <div className="truncate">{credential.password}</div>
                     <Button

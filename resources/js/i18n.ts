@@ -5,12 +5,9 @@ import en from '@/locales/en';
 i18n.use(initReactI18next).init({
     lng: 'en',
     fallbackLng: 'en',
-    defaultNS: 'common',
-    ns: ['common', 'clients'],
     resources: {
         en: {
-            common: en.common,
-            clients: en.clients,
+            translation: en,
         },
     },
     interpolation: {

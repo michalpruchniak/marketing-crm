@@ -23,32 +23,32 @@ export default function CredentialsSection({
     onReveal,
     onDelete,
 }: Props) {
-    const { t } = useTranslation('clients');
+    const { t } = useTranslation();
 
     return (
         <section className="space-y-4">
             <div className="flex flex-wrap items-start justify-between gap-4">
                 <Heading
                     variant="small"
-                    title={t('credentialsTitle')}
-                    description={t('credentialsDescription')}
+                    title={t('clients.credentialsTitle')}
+                    description={t('clients.credentialsDescription')}
                 />
                 <Button type="button" onClick={onAdd}>
                     <Plus className="size-4" />
-                    {t('addCredential')}
+                    {t('clients.addCredential')}
                 </Button>
             </div>
 
             {revealError && (
                 <Alert variant="destructive">
-                    <AlertTitle>{t('revealErrorTitle')}</AlertTitle>
+                    <AlertTitle>{t('clients.revealErrorTitle')}</AlertTitle>
                     <AlertDescription>{revealError}</AlertDescription>
                 </Alert>
             )}
 
             {credentials.length === 0 ? (
                 <p className="text-sm text-muted-foreground">
-                    {t('noCredentials')}
+                    {t('clients.noCredentials')}
                 </p>
             ) : (
                 <CredentialsTable

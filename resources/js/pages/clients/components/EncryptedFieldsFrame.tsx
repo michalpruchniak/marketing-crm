@@ -8,7 +8,7 @@ type Props = {
 };
 
 export default function EncryptedFieldsFrame({ children, className }: Props) {
-    const { t } = useTranslation('clients');
+    const { t } = useTranslation();
 
     return (
         <div
@@ -19,10 +19,10 @@ export default function EncryptedFieldsFrame({ children, className }: Props) {
         >
             <div className="space-y-1">
                 <p className="text-sm font-medium text-orange-800 dark:text-orange-300">
-                    {t('encryptedFieldsTitle')}
+                    {t('clients.encryptedFieldsTitle')}
                 </p>
                 <p className="text-xs text-orange-700/80 dark:text-orange-400/80">
-                    {t('encryptedFieldsDescription')}
+                    {t('clients.encryptedFieldsDescription')}
                 </p>
             </div>
             {children}

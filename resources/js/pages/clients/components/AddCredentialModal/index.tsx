@@ -20,13 +20,13 @@ export default function AddCredentialModal({
     open,
     onOpenChange,
 }: Props) {
-    const { t } = useTranslation('clients');
+    const { t } = useTranslation();
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
                 <DialogHeader>
-                    <DialogTitle>{t('addCredentialTitle')}</DialogTitle>
+                    <DialogTitle>{t('clients.addCredentialTitle')}</DialogTitle>
                 </DialogHeader>
 
                 <Form

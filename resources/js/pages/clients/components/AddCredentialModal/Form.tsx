@@ -80,7 +80,9 @@ export default function AddCredentialForm({
                 </div>
 
                 <div className="grid gap-2">
-                    <FieldLabel htmlFor="password">{t('common.password')}</FieldLabel>
+                    <FieldLabel htmlFor="password">
+                        {t('common.password')}
+                    </FieldLabel>
                     <PasswordInput
                         id="password"
                         name="password"
@@ -96,7 +98,9 @@ export default function AddCredentialForm({
                     <Textarea
                         id="additional_information"
                         name="additional_information"
-                        placeholder={t('clients.additionalInformationPlaceholder')}
+                        placeholder={t(
+                            'clients.additionalInformationPlaceholder',
+                        )}
                     />
                     <InputError message={errors.additional_information} />
                 </div>

@@ -21,7 +21,7 @@ export default function ClientsShow({
     client: Client;
     credentials: CredentialMeta[];
 }) {
-    const { t } = useTranslation('clients');
+    const { t } = useTranslation();
 
     const [createOpen, setCreateOpen] = useState(false);
     const [revealed, setRevealed] = useState<RevealedCredential | null>(null);
@@ -57,7 +57,7 @@ export default function ClientsShow({
                 setRevealError(
                     'message' in data && data.message
                         ? data.message
-                        : t('revealErrorTitle'),
+                        : t('clients.revealErrorTitle'),
                 );
 
                 return;
@@ -66,7 +66,7 @@ export default function ClientsShow({
             setRevealed(data as RevealedCredential);
             setRevealOpen(true);
         } catch {
-            setRevealError(t('revealErrorConnection'));
+            setRevealError(t('clients.revealErrorConnection'));
         } finally {
             setRevealLoading(false);
         }
@@ -112,14 +112,14 @@ export default function ClientsShow({
                 <div className="flex flex-wrap items-start justify-between gap-4">
                     <Heading
                         title={client.name}
-                        description={t('clientDetailsDescription')}
+                        description={t('clients.clientDetailsDescription')}
                     />
                     <Button
                         variant="destructive"
                         onClick={() => setDeleteClientOpen(true)}
                     >
                         <Trash2 className="size-4" />
-                        {t('deleteClient')}
+                        {t('clients.deleteClient')}
                     </Button>
                 </div>
 
@@ -150,8 +150,8 @@ export default function ClientsShow({
             <DeleteModal
                 open={deleteClientOpen}
                 onOpenChange={setDeleteClientOpen}
-                title={t('deleteClientConfirmTitle')}
-                description={t('deleteClientConfirmDescription', {
+                title={t('clients.deleteClientConfirmTitle')}
+                description={t('clients.deleteClientConfirmDescription', {
                     name: client.name,
                 })}
                 onConfirm={confirmDeleteClient}
@@ -160,8 +160,8 @@ export default function ClientsShow({
             <DeleteModal
                 open={deleteCredential !== null}
                 onOpenChange={handleDeleteCredentialOpenChange}
-                title={t('deleteCredentialConfirmTitle')}
-                description={t('deleteCredentialConfirmDescription', {
+                title={t('clients.deleteCredentialConfirmTitle')}
+                description={t('clients.deleteCredentialConfirmDescription', {
                     name: deleteCredential?.name ?? '',
                 })}
                 onConfirm={confirmDeleteCredential}

@@ -19,14 +19,14 @@ export default function RevealCredentialModal({
     onOpenChange,
     credential,
 }: Props) {
-    const { t } = useTranslation('clients');
+    const { t } = useTranslation();
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>
-                        {credential?.name ?? t('revealModalTitle')}
+                        {credential?.name ?? t('clients.revealModalTitle')}
                     </DialogTitle>
                 </DialogHeader>
 
