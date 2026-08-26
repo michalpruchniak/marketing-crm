@@ -2,6 +2,20 @@
 
 namespace App\Providers;
 
+use App\Repositories\ClientRepository;
+use App\Repositories\Contracts\ClientRepositoryInterface;
+use App\Repositories\Contracts\CredentialPayloadRepositoryInterface;
+use App\Repositories\Contracts\CredentialRepositoryInterface;
+use App\Repositories\CredentialPayloadRepository;
+use App\Repositories\CredentialRepository;
+use App\Services\ClientService;
+use App\Services\Contracts\ClientServiceInterface;
+use App\Services\Contracts\CredentialServiceInterface;
+use App\Services\CredentialService;
+use App\Supports\SecretsStorage\Clients\HashicorpVaultClient;
+use App\Supports\SecretsStorage\Contracts\PasswordSecretStorageInterface;
+use App\Supports\SecretsStorage\Factories\SecretsDriverStrategyFactory;
+use App\Supports\SecretsStorage\PasswordSecretStorage;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -15,7 +29,22 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(SecretsDriverStrategyFactory::class);
+        $this->app->bind(PasswordSecretStorageInterface::class, PasswordSecretStorage::class);
+
+        $this->app->singleton(HashicorpVaultClient::class, function (): HashicorpVaultClient {
+            return new HashicorpVaultClient(
+                address: (string) config('secrets.hashicorp.address'),
+                token: (string) config('secrets.hashicorp.token'),
+            );
+        });
+
+        $this->app->bind(ClientRepositoryInterface::class, ClientRepository::class);
+        $this->app->bind(CredentialRepositoryInterface::class, CredentialRepository::class);
+        $this->app->bind(CredentialPayloadRepositoryInterface::class, CredentialPayloadRepository::class);
+
+        $this->app->bind(CredentialServiceInterface::class, CredentialService::class);
+        $this->app->bind(ClientServiceInterface::class, ClientService::class);
     }
 
     /**
