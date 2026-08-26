@@ -12,6 +12,10 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class ClientService implements ClientServiceInterface
 {
+    /**
+     * @param  ClientRepositoryInterface  $clientsRepository
+     * @param  CredentialServiceInterface  $credentialsService
+     */
     public function __construct(
         private readonly ClientRepositoryInterface $clientsRepository,
         private readonly CredentialServiceInterface $credentialsService,
@@ -32,6 +36,10 @@ class ClientService implements ClientServiceInterface
         ]);
     }
 
+    /**
+     * @param  StoreClientDTO  $dto
+     * @return Client
+     */
     public function create(StoreClientDTO $dto): Client
     {
         /** @var Client */
@@ -39,6 +47,9 @@ class ClientService implements ClientServiceInterface
     }
 
     /**
+     * @param  string  $id
+     * @return Client
+     *
      * @throws ModelNotFoundException
      */
     public function findOrFail(string $id): Client
@@ -49,6 +60,10 @@ class ClientService implements ClientServiceInterface
         return $client;
     }
 
+    /**
+     * @param  Client  $client
+     * @return void
+     */
     public function delete(Client $client): void
     {
         $this->credentialsService->deleteAllForClient($client);

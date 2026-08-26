@@ -10,12 +10,19 @@ use RuntimeException;
 
 final class DatabaseSecretStorageStrategy implements SecretStorageStrategyInterface
 {
+    /**
+     * @param  CredentialPayloadRepositoryInterface  $credentialPayloadRepository
+     */
     public function __construct(
         private readonly CredentialPayloadRepositoryInterface $credentialPayloadRepository,
     ) {}
 
     /**
+     * @param  string  $uuid
      * @param  array<string, mixed>  $payload
+     * @return void
+     *
+     * @throws RuntimeException
      */
     public function store(string $uuid, array $payload): void
     {
@@ -25,6 +32,12 @@ final class DatabaseSecretStorageStrategy implements SecretStorageStrategyInterf
         );
     }
 
+    /**
+     * @param  string  $uuid
+     * @return void
+     *
+     * @throws RuntimeException
+     */
     public function delete(string $uuid): void
     {
         /** @var CredentialPayload $payload */
@@ -34,11 +47,14 @@ final class DatabaseSecretStorageStrategy implements SecretStorageStrategyInterf
     }
 
     /**
+     * @param  string  $uuid
      * @return array<string, mixed>
+     *
+     * @throws RuntimeException
      */
     public function reveal(string $uuid): array
     {
-        /** @var CredentialPayload|null $credential */
+        /** @var CredentialPayload $credential */
         $credential = $this->credentialPayloadRepository->firstOrFail(['uuid' => $uuid]);
 
         try {

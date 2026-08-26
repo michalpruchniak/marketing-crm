@@ -14,12 +14,23 @@ interface ClientServiceInterface
      */
     public function getAll(): Collection;
 
+    /**
+     * @param  StoreClientDTO  $dto
+     * @return Client
+     */
     public function create(StoreClientDTO $dto): Client;
 
     /**
+     * @param  string  $id
+     * @return Client
+     *
      * @throws ModelNotFoundException
      */
     public function findOrFail(string $id): Client;
 
+    /**
+     * @param  Client  $client
+     * @return void
+     */
     public function delete(Client $client): void;
 }

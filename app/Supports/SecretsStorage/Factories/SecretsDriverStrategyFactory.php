@@ -11,11 +11,18 @@ use InvalidArgumentException;
 
 class SecretsDriverStrategyFactory implements SecretsDriverStrategyFactoryInterface
 {
+    /**
+     * @return SecretStorageStrategyInterface
+     */
     public function create(): SecretStorageStrategyInterface
     {
         return $this->createFor($this->currentDriver());
     }
 
+    /**
+     * @param  SecretsDriver  $driver
+     * @return SecretStorageStrategyInterface
+     */
     public function createFor(SecretsDriver $driver): SecretStorageStrategyInterface
     {
         return match ($driver) {
@@ -25,6 +32,8 @@ class SecretsDriverStrategyFactory implements SecretsDriverStrategyFactoryInterf
     }
 
     /**
+     * @return SecretsDriver
+     *
      * @throws InvalidArgumentException
      */
     public function currentDriver(): SecretsDriver

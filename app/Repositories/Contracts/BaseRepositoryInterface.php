@@ -4,16 +4,23 @@ namespace App\Repositories\Contracts;
 
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
-interface RepositoryInterface
+interface BaseRepositoryInterface
 {
     /**
+     * @param  string|int  $id
      * @param  list<string>  $columns
+     * @return Model|null
      */
     public function find(string|int $id, array $columns = ['*']): ?Model;
 
     /**
+     * @param  string|int  $id
      * @param  list<string>  $columns
+     * @return Model
+     *
+     * @throws ModelNotFoundException
      */
     public function findOrFail(string|int $id, array $columns = ['*']): Model;
 
@@ -28,19 +35,28 @@ interface RepositoryInterface
     /**
      * @param  array<string, mixed>  $where
      * @param  list<string>  $columns
+     * @return Model|null
      */
     public function first(array $where = [], array $columns = ['*']): ?Model;
 
     /**
      * @param  array<string, mixed>  $where
      * @param  list<string>  $columns
+     * @return Model
+     *
+     * @throws ModelNotFoundException
      */
-    public function firstOrFail(array $where = [], array $columns = ['*']): ?Model;
+    public function firstOrFail(array $where = [], array $columns = ['*']): Model;
 
     /**
      * @param  array<string, mixed>  $data
+     * @return Model
      */
     public function create(array $data): Model;
 
+    /**
+     * @param  Model  $model
+     * @return bool
+     */
     public function delete(Model $model): bool;
 }

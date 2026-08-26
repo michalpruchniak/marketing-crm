@@ -17,12 +17,17 @@ use Throwable;
 
 class CredentialService implements CredentialServiceInterface
 {
+    /**
+     * @param  CredentialRepositoryInterface  $credentialsRepository
+     * @param  PasswordSecretStorageInterface  $passwordSecretStorage
+     */
     public function __construct(
         private readonly CredentialRepositoryInterface $credentialsRepository,
         private readonly PasswordSecretStorageInterface $passwordSecretStorage,
     ) {}
 
     /**
+     * @param  string  $clientId
      * @return Collection<int, Credential>
      */
     public function allForClient(string $clientId): Collection
@@ -35,6 +40,12 @@ class CredentialService implements CredentialServiceInterface
         );
     }
 
+    /**
+     * @param  StoreCredentialDTO  $data
+     * @return Credential
+     *
+     * @throws Throwable
+     */
     public function store(StoreCredentialDTO $data): Credential
     {
         $storedSecret = $this->passwordSecretStorage->store($data->toSecretPayloadDTO());
@@ -54,6 +65,10 @@ class CredentialService implements CredentialServiceInterface
     }
 
     /**
+     * @param  Client  $client
+     * @param  string  $credentialId
+     * @return RevealedCredentialDTO
+     *
      * @throws RuntimeException
      */
     public function reveal(Client $client, string $credentialId): RevealedCredentialDTO
@@ -72,6 +87,11 @@ class CredentialService implements CredentialServiceInterface
         );
     }
 
+    /**
+     * @param  Client  $client
+     * @param  string  $credentialId
+     * @return void
+     */
     public function delete(Client $client, string $credentialId): void
     {
         $credential = $this->findCredentialForActiveDriver($client->id, $credentialId);
@@ -82,6 +102,10 @@ class CredentialService implements CredentialServiceInterface
         });
     }
 
+    /**
+     * @param  Client  $client
+     * @return void
+     */
     public function deleteAllForClient(Client $client): void
     {
         foreach ($this->credentialsRepository->allForClient($client->id) as $credential) {
@@ -90,11 +114,19 @@ class CredentialService implements CredentialServiceInterface
         }
     }
 
+    /**
+     * @return SecretsDriver
+     */
     public function currentDriver(): SecretsDriver
     {
         return $this->passwordSecretStorage->currentDriver();
     }
 
+    /**
+     * @param  string  $clientId
+     * @param  string  $credentialId
+     * @return Credential
+     */
     private function findCredentialForActiveDriver(string $clientId, string $credentialId): Credential
     {
         return $this->credentialsRepository->findForClient(

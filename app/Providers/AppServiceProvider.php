@@ -29,8 +29,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->singleton(SecretsDriverStrategyFactory::class);
-        $this->app->singleton(PasswordSecretStorageInterface::class, PasswordSecretStorage::class);
+        $this->app->bind(SecretsDriverStrategyFactory::class);
+        $this->app->bind(PasswordSecretStorageInterface::class, PasswordSecretStorage::class);
 
         $this->app->singleton(HashicorpVaultClient::class, function (): HashicorpVaultClient {
             return new HashicorpVaultClient(

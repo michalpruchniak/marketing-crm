@@ -12,11 +12,22 @@ class HashicorpVaultClient implements HashicorpVaultClientInterface
 {
     private const MOUNT = 'credentials';
 
+    /**
+     * @param  string  $address
+     * @param  string  $token
+     */
     public function __construct(
         private readonly string $address,
         private readonly string $token,
     ) {}
 
+    /**
+     * @param  string  $uuid
+     * @param  SecretPayloadDTO  $payload
+     * @return void
+     *
+     * @throws RuntimeException
+     */
     public function store(string $uuid, SecretPayloadDTO $payload): void
     {
         $response = $this->http()->post($this->dataUrl($uuid), [
@@ -28,6 +39,12 @@ class HashicorpVaultClient implements HashicorpVaultClientInterface
         }
     }
 
+    /**
+     * @param  string  $uuid
+     * @return array<string, mixed>|null
+     *
+     * @throws RuntimeException
+     */
     public function get(string $uuid): ?array
     {
         $response = $this->http()->get($this->dataUrl($uuid));
@@ -46,6 +63,12 @@ class HashicorpVaultClient implements HashicorpVaultClientInterface
         return $data;
     }
 
+    /**
+     * @param  string  $uuid
+     * @return void
+     *
+     * @throws RuntimeException
+     */
     public function delete(string $uuid): void
     {
         $response = $this->http()->delete($this->metadataUrl($uuid));
@@ -55,6 +78,9 @@ class HashicorpVaultClient implements HashicorpVaultClientInterface
         }
     }
 
+    /**
+     * @return PendingRequest
+     */
     private function http(): PendingRequest
     {
         return Http::baseUrl(rtrim($this->address, '/'))
@@ -65,11 +91,19 @@ class HashicorpVaultClient implements HashicorpVaultClientInterface
             ->asJson();
     }
 
+    /**
+     * @param  string  $uuid
+     * @return string
+     */
     private function dataUrl(string $uuid): string
     {
         return '/v1/'.self::MOUNT.'/data/'.$uuid;
     }
 
+    /**
+     * @param  string  $uuid
+     * @return string
+     */
     private function metadataUrl(string $uuid): string
     {
         return '/v1/'.self::MOUNT.'/metadata/'.$uuid;

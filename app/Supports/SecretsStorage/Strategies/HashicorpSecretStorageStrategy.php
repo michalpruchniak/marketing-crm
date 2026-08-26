@@ -10,25 +10,41 @@ use Throwable;
 
 final class HashicorpSecretStorageStrategy implements SecretStorageStrategyInterface
 {
+    /**
+     * @param  HashicorpVaultClient  $client
+     */
     public function __construct(
         private readonly HashicorpVaultClient $client,
     ) {}
 
     /**
+     * @param  string  $uuid
      * @param  array<string, mixed>  $payload
+     * @return void
+     *
+     * @throws RuntimeException
      */
     public function store(string $uuid, array $payload): void
     {
         $this->client->store($uuid, SecretPayloadDTO::fromArray($payload));
     }
 
+    /**
+     * @param  string  $uuid
+     * @return void
+     *
+     * @throws RuntimeException
+     */
     public function delete(string $uuid): void
     {
         $this->client->delete($uuid);
     }
 
     /**
+     * @param  string  $uuid
      * @return array<string, mixed>
+     *
+     * @throws RuntimeException
      */
     public function reveal(string $uuid): array
     {
