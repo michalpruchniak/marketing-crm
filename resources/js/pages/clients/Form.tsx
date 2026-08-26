@@ -7,9 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { index as clientsIndex } from '@/routes/clients';
 import FieldLabel from './components/FieldLabel';
 
-type FormErrors = Partial<
-    Record<'name' | 'email' | 'phone' | 'notes', string>
->;
+type FormErrors = Partial<Record<'name' | 'email' | 'phone' | 'notes', string>>;
 
 type Props = {
     processing: boolean;
