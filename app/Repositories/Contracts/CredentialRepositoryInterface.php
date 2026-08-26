@@ -9,6 +9,12 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 interface CredentialRepositoryInterface extends BaseRepositoryInterface
 {
     /**
+     * @param  array<string, mixed>  $data
+     * @return Credential
+     */
+    public function create(array $data): Credential;
+
+    /**
      * @param  string  $clientId
      * @param  list<string>  $columns
      * @return Collection<int, Credential>
