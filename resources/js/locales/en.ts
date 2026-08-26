@@ -37,7 +37,7 @@ const en = {
         namePlaceholder: 'Acme Sp. z o.o.',
         emailPlaceholder: 'contact@example.com',
         phonePlaceholder: '+48 123 456 789',
-        notesPlaceholder: 'Optional notes about this client',
+        notesPlaceholder: 'Notes about this client',
         saveClient: 'Save client',
 
         // Show
@@ -65,10 +65,12 @@ const en = {
         // AddCredentialModal
         addCredentialTitle: 'Add credential',
         credNamePlaceholder: 'FTP / Panel / Email',
-        descriptionPlaceholder: 'Optional description',
+        descriptionPlaceholder: 'Description',
         urlPlaceholder: 'https://example.com',
-        urlOptional: 'URL (optional)',
         additionalInformationPlaceholder: 'PIN, recovery codes, etc.',
+        encryptedFieldsTitle: 'Encrypted fields',
+        encryptedFieldsDescription:
+            'These values are encrypted before they are stored.',
 
         // RevealCredentialModal
         revealModalTitle: 'Credential',

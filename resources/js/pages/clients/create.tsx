@@ -5,25 +5,24 @@ import Heading from '@/components/heading';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import {
     index as clientsIndex,
     create as clientsCreate,
 } from '@/routes/clients';
+import FieldLabel from './components/FieldLabel';
 
 export default function ClientsCreate() {
-    const { t } = useTranslation('clients');
-    const { t: tc } = useTranslation('common');
+    const { t } = useTranslation();
 
     return (
         <>
-            <Head title={t('createTitle')} />
+            <Head title={t('clients.createTitle')} />
 
             <div className="flex h-full flex-1 flex-col gap-6 p-4">
                 <Heading
-                    title={t('createTitle')}
-                    description={t('createDescription')}
+                    title={t('clients.createTitle')}
+                    description={t('clients.createDescription')}
                 />
 
                 <Form
@@ -33,55 +32,63 @@ export default function ClientsCreate() {
                     {({ processing, errors }) => (
                         <>
                             <div className="grid gap-2">
-                                <Label htmlFor="name">{tc('name')}</Label>
+                                <FieldLabel htmlFor="name" required>
+                                    {t('common.name')}
+                                </FieldLabel>
                                 <Input
                                     id="name"
                                     name="name"
                                     required
                                     autoFocus
-                                    placeholder={t('namePlaceholder')}
+                                    placeholder={t('clients.namePlaceholder')}
                                 />
                                 <InputError message={errors.name} />
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="email">{tc('email')}</Label>
+                                <FieldLabel htmlFor="email">
+                                    {t('common.email')}
+                                </FieldLabel>
                                 <Input
                                     id="email"
                                     type="email"
                                     name="email"
-                                    placeholder={t('emailPlaceholder')}
+                                    placeholder={t('clients.emailPlaceholder')}
                                 />
                                 <InputError message={errors.email} />
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="phone">{tc('phone')}</Label>
+                                <FieldLabel htmlFor="phone">
+                                    {t('common.phone')}
+                                </FieldLabel>
                                 <Input
                                     id="phone"
                                     name="phone"
-                                    placeholder={t('phonePlaceholder')}
+                                    placeholder={t('clients.phonePlaceholder')}
                                 />
                                 <InputError message={errors.phone} />
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="notes">{tc('notes')}</Label>
+                                <FieldLabel htmlFor="notes">
+                                    {t('common.notes')}
+                                </FieldLabel>
                                 <Textarea
                                     id="notes"
                                     name="notes"
-                                    placeholder={t('notesPlaceholder')}
+                                    placeholder={t('clients.notesPlaceholder')}
                                 />
                                 <InputError message={errors.notes} />
                             </div>
 
                             <div className="flex gap-3">
                                 <Button type="submit" disabled={processing}>
-                                    {t('saveClient')}
+                                    {t('clients.saveClient')}
                                 </Button>
                                 <Button variant="outline" asChild>
                                     <Link href={clientsIndex()}>
-                                        {tc('cancel')}
+                                        {t('common.cancel')}
                                     </Link>
                                 </Button>
                             </div>

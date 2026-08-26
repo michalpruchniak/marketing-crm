@@ -28,7 +28,7 @@ export default function DeleteModal({
     cancelLabel,
     onConfirm,
 }: Props) {
-    const { t: tc } = useTranslation('common');
+    const { t } = useTranslation();
 
     function handleConfirm() {
         onConfirm();
@@ -47,10 +47,10 @@ export default function DeleteModal({
                         variant="outline"
                         onClick={() => onOpenChange(false)}
                     >
-                        {cancelLabel ?? tc('cancel')}
+                        {cancelLabel ?? t('common.cancel')}
                     </Button>
                     <Button variant="destructive" onClick={handleConfirm}>
-                        {confirmLabel ?? tc('delete')}
+                        {confirmLabel ?? t('common.delete')}
                     </Button>
                 </DialogFooter>
             </DialogContent>

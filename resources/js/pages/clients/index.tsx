@@ -29,24 +29,23 @@ export default function ClientsIndex({
 }: {
     clients: ClientListItem[];
 }) {
-    const { t } = useTranslation('clients');
-    const { t: tc } = useTranslation('common');
+    const { t } = useTranslation();
 
     return (
         <>
-            <Head title={t('pageTitle')} />
+            <Head title={t('clients.pageTitle')} />
 
             <div className="flex h-full flex-1 flex-col gap-6 p-4">
                 <div className="flex items-start justify-between gap-4">
                     <Heading
-                        title={t('pageTitle')}
-                        description={t('pageDescription')}
+                        title={t('clients.pageTitle')}
+                        description={t('clients.pageDescription')}
                     />
 
                     <Button asChild>
                         <Link href={clientsCreate()}>
                             <Plus className="size-4" />
-                            {t('addClient')}
+                            {t('clients.addClient')}
                         </Link>
                     </Button>
                 </div>
@@ -56,16 +55,16 @@ export default function ClientsIndex({
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
                                 <Users className="size-5" />
-                                {t('noClientsTitle')}
+                                {t('clients.noClientsTitle')}
                             </CardTitle>
                             <CardDescription>
-                                {t('noClientsDescription')}
+                                {t('clients.noClientsDescription')}
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
                             <Button asChild>
                                 <Link href={clientsCreate()}>
-                                    {t('addClient')}
+                                    {t('clients.addClient')}
                                 </Link>
                             </Button>
                         </CardContent>
@@ -76,13 +75,13 @@ export default function ClientsIndex({
                             <thead className="border-b bg-muted/40">
                                 <tr>
                                     <th className="px-4 py-3 font-medium">
-                                        {tc('name')}
+                                        {t('common.name')}
                                     </th>
                                     <th className="px-4 py-3 font-medium">
-                                        {tc('email')}
+                                        {t('common.email')}
                                     </th>
                                     <th className="px-4 py-3 font-medium">
-                                        {tc('phone')}
+                                        {t('common.phone')}
                                     </th>
                                     <th className="px-4 py-3 font-medium" />
                                 </tr>
@@ -113,7 +112,7 @@ export default function ClientsIndex({
                                                         client.id,
                                                     )}
                                                 >
-                                                    {tc('open')}
+                                                    {t('common.open')}
                                                 </Link>
                                             </Button>
                                         </td>
