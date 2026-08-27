@@ -53,8 +53,7 @@ export default function ClientsShow({
             });
 
             const data = (await response.json()) as
-                | RevealedCredential
-                | { message?: string };
+                RevealedCredential | { message?: string };
 
             if (!response.ok) {
                 setRevealError(

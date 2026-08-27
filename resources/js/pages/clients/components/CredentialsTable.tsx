@@ -78,9 +78,7 @@ export default function CredentialsTable({
                                             type="button"
                                             variant="ghost"
                                             size="sm"
-                                            onClick={() =>
-                                                onDelete(credential)
-                                            }
+                                            onClick={() => onDelete(credential)}
                                         >
                                             <Trash2 className="size-4" />
                                         </Button>

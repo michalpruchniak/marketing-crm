@@ -55,7 +55,7 @@ export default function ClientsIndex({ clients }: { clients: Client[] }) {
                                 {t('clients.noClientsDescription')}
                             </CardDescription>
                         </CardHeader>
-                        {canCreate && (
+                        {can.clients.create && (
                             <CardContent>
                                 <Button asChild>
                                     <Link href={clientsCreate()}>
