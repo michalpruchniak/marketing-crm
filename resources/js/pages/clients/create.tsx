@@ -1,4 +1,4 @@
-import { Form, Head } from '@inertiajs/react';
+import { Form, Head, usePage } from '@inertiajs/react';
 import { useTranslation } from 'react-i18next';
 import ClientController from '@/actions/App/Http/Controllers/ClientController';
 import Heading from '@/components/heading';
@@ -10,6 +10,7 @@ import CreateClientForm from './Form';
 
 export default function ClientsCreate() {
     const { t } = useTranslation();
+    const { can, coordinators = [] } = usePage().props;
 
     return (
         <>
@@ -29,6 +30,8 @@ export default function ClientsCreate() {
                         <CreateClientForm
                             processing={processing}
                             errors={errors}
+                            canAssignCoordinator={can.clients.assignCoordinator}
+                            coordinators={coordinators}
                         />
                     )}
                 </Form>

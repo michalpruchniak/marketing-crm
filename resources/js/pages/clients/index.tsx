@@ -20,7 +20,7 @@ import type { Client } from './types';
 
 export default function ClientsIndex({ clients }: { clients: Client[] }) {
     const { t } = useTranslation();
-    const { auth } = usePage().props;
+    const { auth, can } = usePage().props;
     const currentUserId = auth.user?.id ?? null;
 
     return (
@@ -34,12 +34,14 @@ export default function ClientsIndex({ clients }: { clients: Client[] }) {
                         description={t('clients.pageDescription')}
                     />
 
-                    <Button asChild>
-                        <Link href={clientsCreate()}>
-                            <Plus className="size-4" />
-                            {t('clients.addClient')}
-                        </Link>
-                    </Button>
+                    {can.clients.create && (
+                        <Button asChild>
+                            <Link href={clientsCreate()}>
+                                <Plus className="size-4" />
+                                {t('clients.addClient')}
+                            </Link>
+                        </Button>
+                    )}
                 </div>
 
                 {clients.length === 0 ? (
@@ -53,13 +55,15 @@ export default function ClientsIndex({ clients }: { clients: Client[] }) {
                                 {t('clients.noClientsDescription')}
                             </CardDescription>
                         </CardHeader>
-                        <CardContent>
-                            <Button asChild>
-                                <Link href={clientsCreate()}>
-                                    {t('clients.addClient')}
-                                </Link>
-                            </Button>
-                        </CardContent>
+                        {canCreate && (
+                            <CardContent>
+                                <Button asChild>
+                                    <Link href={clientsCreate()}>
+                                        {t('clients.addClient')}
+                                    </Link>
+                                </Button>
+                            </CardContent>
+                        )}
                     </Card>
                 ) : (
                     <div className="overflow-hidden rounded-xl border">

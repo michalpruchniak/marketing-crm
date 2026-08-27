@@ -24,9 +24,6 @@ export default function ClientsShow({
 }) {
     const { t } = useTranslation();
     const { can } = usePage().props;
-    const canUpdate = can?.update ?? false;
-    const canDelete = can?.delete ?? false;
-
     const [createOpen, setCreateOpen] = useState(false);
     const [editOpen, setEditOpen] = useState(false);
     const [revealed, setRevealed] = useState<RevealedCredential | null>(null);
@@ -56,7 +53,8 @@ export default function ClientsShow({
             });
 
             const data = (await response.json()) as
-                RevealedCredential | { message?: string };
+                | RevealedCredential
+                | { message?: string };
 
             if (!response.ok) {
                 setRevealError(
@@ -120,7 +118,7 @@ export default function ClientsShow({
                         description={t('clients.clientDetailsDescription')}
                     />
                     <div className="flex flex-wrap gap-2">
-                        {canUpdate && (
+                        {can.clients.update && (
                             <Button
                                 variant="outline"
                                 onClick={() => setEditOpen(true)}
@@ -129,7 +127,7 @@ export default function ClientsShow({
                                 {t('common.edit')}
                             </Button>
                         )}
-                        {canDelete && (
+                        {can.clients.delete && (
                             <Button
                                 variant="destructive"
                                 onClick={() => setDeleteClientOpen(true)}
@@ -143,23 +141,30 @@ export default function ClientsShow({
 
                 <ClientDetailsSection client={client} />
 
-                <CredentialsSection
-                    credentials={credentials}
-                    revealError={revealError}
-                    revealLoading={revealLoading}
-                    onAdd={() => setCreateOpen(true)}
-                    onReveal={handleReveal}
-                    onDelete={setDeleteCredential}
-                />
+                {can.credentials.view && (
+                    <CredentialsSection
+                        credentials={credentials}
+                        revealError={revealError}
+                        revealLoading={revealLoading}
+                        canCreate={can.credentials.create}
+                        canReveal={can.credentials.reveal}
+                        canDelete={can.credentials.delete}
+                        onAdd={() => setCreateOpen(true)}
+                        onReveal={handleReveal}
+                        onDelete={setDeleteCredential}
+                    />
+                )}
             </div>
 
-            <AddCredentialModal
-                clientId={client.id}
-                open={createOpen}
-                onOpenChange={setCreateOpen}
-            />
+            {can.credentials.create && (
+                <AddCredentialModal
+                    clientId={client.id}
+                    open={createOpen}
+                    onOpenChange={setCreateOpen}
+                />
+            )}
 
-            {canUpdate && (
+            {can.clients.update && (
                 <EditClientModal
                     client={client}
                     open={editOpen}
@@ -173,7 +178,7 @@ export default function ClientsShow({
                 credential={revealed}
             />
 
-            {canDelete && (
+            {can.clients.delete && (
                 <DeleteModal
                     open={deleteClientOpen}
                     onOpenChange={setDeleteClientOpen}
@@ -185,15 +190,20 @@ export default function ClientsShow({
                 />
             )}
 
-            <DeleteModal
-                open={deleteCredential !== null}
-                onOpenChange={handleDeleteCredentialOpenChange}
-                title={t('clients.deleteCredentialConfirmTitle')}
-                description={t('clients.deleteCredentialConfirmDescription', {
-                    name: deleteCredential?.name ?? '',
-                })}
-                onConfirm={confirmDeleteCredential}
-            />
+            {can.credentials.delete && (
+                <DeleteModal
+                    open={deleteCredential !== null}
+                    onOpenChange={handleDeleteCredentialOpenChange}
+                    title={t('clients.deleteCredentialConfirmTitle')}
+                    description={t(
+                        'clients.deleteCredentialConfirmDescription',
+                        {
+                            name: deleteCredential?.name ?? '',
+                        },
+                    )}
+                    onConfirm={confirmDeleteCredential}
+                />
+            )}
         </>
     );
 }

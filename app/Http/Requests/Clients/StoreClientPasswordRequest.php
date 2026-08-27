@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Clients;
 
+use App\Enums\Permission;
 use App\Http\DTO\StoreCredentialDTO;
 use App\Models\Client;
 use Illuminate\Foundation\Http\FormRequest;
@@ -11,7 +12,7 @@ class StoreClientPasswordRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true;
+        return $this->user()?->can(Permission::CredentialsCreate->value) ?? false;
     }
 
     /**

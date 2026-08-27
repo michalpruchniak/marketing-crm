@@ -53,14 +53,17 @@ class ClientService implements ClientServiceInterface
      */
     public function create(StoreClientDTO $dto): Client
     {
-        $coordinatorId = Auth::id();
+        $coordinatorId = $dto->coordinatorId ?? Auth::id();
 
         if ($coordinatorId === null) {
             throw new LogicException('Authenticated user required to create a client.');
         }
 
         $client = $this->clientsRepository->create([
-            ...$dto->toArray(),
+            'name' => $dto->name,
+            'email' => $dto->email,
+            'phone' => $dto->phone,
+            'notes' => $dto->notes,
             'coordinator_id' => $coordinatorId,
         ]);
 

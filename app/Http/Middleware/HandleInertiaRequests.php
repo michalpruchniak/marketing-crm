@@ -2,7 +2,9 @@
 
 namespace App\Http\Middleware;
 
+use App\Enums\Permission;
 use App\Models\Client;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -43,32 +45,72 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
-            ...$this->clientPermissions($request),
+            'can' => $this->permissions($request),
+            ...$this->coordinators($request),
         ];
     }
 
     /**
-     * @return array{can: array{update: bool, delete: bool}}|array{}
+     * @return array{
+     *     clients: array{create: bool, assignCoordinator: bool, update?: bool, delete?: bool},
+     *     credentials: array{view: bool, create: bool, reveal: bool, delete: bool}
+     * }
      */
-    private function clientPermissions(Request $request): array
+    private function permissions(Request $request): array
     {
-        if (! $request->routeIs('clients.show')) {
-            return [];
+        $user = $request->user();
+
+        $can = [
+            'clients' => [
+                'create' => $user?->can(Permission::ClientsCreate->value) ?? false,
+                'assignCoordinator' => $user?->can(Permission::ClientsAssignCoordinator->value) ?? false,
+            ],
+            'credentials' => [
+                'view' => $user?->can(Permission::CredentialsView->value) ?? false,
+                'create' => $user?->can(Permission::CredentialsCreate->value) ?? false,
+                'reveal' => $user?->can(Permission::CredentialsReveal->value) ?? false,
+                'delete' => $user?->can(Permission::CredentialsDelete->value) ?? false,
+            ],
+        ];
+
+        if ($request->routeIs('clients.show')) {
+            $client = $request->route('client');
+
+            if ($client instanceof Client) {
+                $can['clients']['update'] = $user?->can('update', $client) ?? false;
+                $can['clients']['delete'] = $user?->can('delete', $client) ?? false;
+            }
         }
 
-        $client = $request->route('client');
+        return $can;
+    }
 
-        if (! $client instanceof Client) {
+    /**
+     * @return array{coordinators: array<int, array{id: int, name: string}>}|array{}
+     */
+    private function coordinators(Request $request): array
+    {
+        if (! $request->routeIs(['clients.create', 'clients.show'])) {
             return [];
         }
 
         $user = $request->user();
 
+        if (! ($user?->can(Permission::ClientsAssignCoordinator->value) ?? false)) {
+            return [];
+        }
+
         return [
-            'can' => [
-                'update' => $user?->can('update', $client) ?? false,
-                'delete' => $user?->can('delete', $client) ?? false,
-            ],
+            'coordinators' => User::query()
+                ->assignableCoordinators()
+                ->orderBy('name')
+                ->get(['id', 'name'])
+                ->map(static fn (User $coordinator): array => [
+                    'id' => $coordinator->id,
+                    'name' => $coordinator->name,
+                ])
+                ->values()
+                ->all(),
         ];
     }
 }

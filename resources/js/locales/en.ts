@@ -31,6 +31,7 @@ const en = {
             'Create your first client to start storing credentials.',
         tableHeadPhone: 'Phone',
         coordinator: 'Coordinator',
+        coordinatorPlaceholder: 'Select a coordinator',
 
         // Create
         createTitle: 'Add client',

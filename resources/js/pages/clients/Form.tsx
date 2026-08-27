@@ -7,14 +7,28 @@ import { Textarea } from '@/components/ui/textarea';
 import { index as clientsIndex } from '@/routes/clients';
 import FieldLabel from './components/FieldLabel';
 
-type FormErrors = Partial<Record<'name' | 'email' | 'phone' | 'notes', string>>;
+type FormErrors = Partial<
+    Record<'name' | 'email' | 'phone' | 'notes' | 'coordinator_id', string>
+>;
+
+type CoordinatorOption = {
+    id: number;
+    name: string;
+};
 
 type Props = {
     processing: boolean;
     errors: FormErrors;
+    canAssignCoordinator?: boolean;
+    coordinators?: CoordinatorOption[];
 };
 
-export default function CreateClientForm({ processing, errors }: Props) {
+export default function CreateClientForm({
+    processing,
+    errors,
+    canAssignCoordinator = false,
+    coordinators = [],
+}: Props) {
     const { t } = useTranslation();
 
     return (
@@ -53,6 +67,34 @@ export default function CreateClientForm({ processing, errors }: Props) {
                 />
                 <InputError message={errors.phone} />
             </div>
+
+            {canAssignCoordinator && (
+                <div className="grid gap-2">
+                    <FieldLabel htmlFor="coordinator_id" required>
+                        {t('clients.coordinator')}
+                    </FieldLabel>
+                    <select
+                        id="coordinator_id"
+                        name="coordinator_id"
+                        required
+                        defaultValue=""
+                        className="border-input bg-transparent focus-visible:border-ring focus-visible:ring-ring/50 flex h-9 w-full rounded-md border px-3 py-1 text-sm shadow-xs outline-none focus-visible:ring-[3px]"
+                    >
+                        <option value="" disabled>
+                            {t('clients.coordinatorPlaceholder')}
+                        </option>
+                        {coordinators.map((coordinator) => (
+                            <option
+                                key={coordinator.id}
+                                value={coordinator.id}
+                            >
+                                {coordinator.name}
+                            </option>
+                        ))}
+                    </select>
+                    <InputError message={errors.coordinator_id} />
+                </div>
+            )}
 
             <div className="grid gap-2">
                 <FieldLabel htmlFor="notes">{t('common.notes')}</FieldLabel>

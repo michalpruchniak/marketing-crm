@@ -12,12 +12,6 @@ export default function ClientDetailsSection({ client }: Props) {
         <section className="grid max-w-3xl gap-3 rounded-xl border p-4 text-sm">
             <div>
                 <span className="text-muted-foreground">
-                    {t('clients.coordinator')}:{' '}
-                </span>
-                {client.coordinator?.name ?? '—'}
-            </div>
-            <div>
-                <span className="text-muted-foreground">
                     {t('common.email')}:{' '}
                 </span>
                 {client.email ?? '—'}
@@ -33,6 +27,12 @@ export default function ClientDetailsSection({ client }: Props) {
                     {t('common.notes')}:{' '}
                 </span>
                 {client.notes ?? '—'}
+            </div>
+            <div>
+                <span className="text-muted-foreground">
+                    {t('clients.coordinator')}:{' '}
+                </span>
+                {client.coordinator?.name ?? '—'}
             </div>
         </section>
     );

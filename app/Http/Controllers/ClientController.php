@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Permission;
 use App\Http\Requests\Clients\StoreClientRequest;
 use App\Http\Requests\Clients\UpdateClientRequest;
 use App\Models\Client;
@@ -41,8 +42,6 @@ class ClientController extends Controller
 
     public function store(StoreClientRequest $request): RedirectResponse
     {
-        $this->authorize('create', Client::class);
-
         $client = $this->clientService->create($request->getDTO());
 
         Inertia::flash('toast', [
@@ -58,7 +57,12 @@ class ClientController extends Controller
         $this->authorize('view', $client);
 
         $client->load(['coordinator:id,name']);
-        $credentials = $this->credentialService->allForClient($client->id);
+
+        $canViewCredentials = request()->user()?->can(Permission::CredentialsView->value) ?? false;
+
+        $credentials = $canViewCredentials
+            ? $this->credentialService->allForClient($client->id)
+            : [];
 
         return Inertia::render('clients/show', [
             'client' => $client,

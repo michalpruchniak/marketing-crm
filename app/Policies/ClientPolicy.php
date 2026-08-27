@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\Permission;
 use App\Models\Client;
 use App\Models\User;
 
@@ -32,7 +33,7 @@ class ClientPolicy
      */
     public function create(User $user): bool
     {
-        return true;
+        return $user->can(Permission::ClientsCreate->value);
     }
 
     /**
@@ -42,7 +43,12 @@ class ClientPolicy
      */
     public function update(User $user, Client $client): bool
     {
-        return $this->isCoordinator($user, $client);
+        if ($user->can(Permission::ClientsUpdateAny->value)) {
+            return true;
+        }
+
+        return $user->can(Permission::ClientsUpdateOwn->value)
+            && $this->isCoordinator($user, $client);
     }
 
     /**
@@ -52,7 +58,12 @@ class ClientPolicy
      */
     public function delete(User $user, Client $client): bool
     {
-        return $this->isCoordinator($user, $client);
+        if ($user->can(Permission::ClientsDeleteAny->value)) {
+            return true;
+        }
+
+        return $user->can(Permission::ClientsDeleteOwn->value)
+            && $this->isCoordinator($user, $client);
     }
 
     /**

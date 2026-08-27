@@ -13,10 +13,24 @@ declare module '@inertiajs/core' {
             name: string;
             auth: Auth;
             sidebarOpen: boolean;
-            can?: {
-                update: boolean;
-                delete: boolean;
+            can: {
+                clients: {
+                    create: boolean;
+                    assignCoordinator: boolean;
+                    update?: boolean;
+                    delete?: boolean;
+                };
+                credentials: {
+                    view: boolean;
+                    create: boolean;
+                    reveal: boolean;
+                    delete: boolean;
+                };
             };
+            coordinators?: Array<{
+                id: number;
+                name: string;
+            }>;
             [key: string]: unknown;
         };
     }
