@@ -30,7 +30,7 @@ export default function ClientsCreate() {
                         <CreateClientForm
                             processing={processing}
                             errors={errors}
-                            canAssignCoordinator={can.clients.assignCoordinator}
+                            canAssignCoordinator={can.canClientsAssignCoordinator}
                             coordinators={coordinators}
                         />
                     )}

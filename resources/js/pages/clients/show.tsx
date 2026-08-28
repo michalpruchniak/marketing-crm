@@ -53,7 +53,8 @@ export default function ClientsShow({
             });
 
             const data = (await response.json()) as
-                RevealedCredential | { message?: string };
+                | RevealedCredential
+                | { message?: string };
 
             if (!response.ok) {
                 setRevealError(
@@ -117,7 +118,7 @@ export default function ClientsShow({
                         description={t('clients.clientDetailsDescription')}
                     />
                     <div className="flex flex-wrap gap-2">
-                        {can.clients.update && (
+                        {can.canClientsUpdate && (
                             <Button
                                 variant="outline"
                                 onClick={() => setEditOpen(true)}
@@ -126,7 +127,7 @@ export default function ClientsShow({
                                 {t('common.edit')}
                             </Button>
                         )}
-                        {can.clients.delete && (
+                        {can.canClientsDelete && (
                             <Button
                                 variant="destructive"
                                 onClick={() => setDeleteClientOpen(true)}
@@ -140,14 +141,14 @@ export default function ClientsShow({
 
                 <ClientDetailsSection client={client} />
 
-                {can.credentials.view && (
+                {can.canCredentialsView && (
                     <CredentialsSection
                         credentials={credentials}
                         revealError={revealError}
                         revealLoading={revealLoading}
-                        canCreate={can.credentials.create}
-                        canReveal={can.credentials.reveal}
-                        canDelete={can.credentials.delete}
+                        canCreate={can.canCredentialsCreate}
+                        canReveal={can.canCredentialsReveal}
+                        canDelete={can.canCredentialsDelete}
                         onAdd={() => setCreateOpen(true)}
                         onReveal={handleReveal}
                         onDelete={setDeleteCredential}
@@ -155,7 +156,7 @@ export default function ClientsShow({
                 )}
             </div>
 
-            {can.credentials.create && (
+            {can.canCredentialsCreate && (
                 <AddCredentialModal
                     clientId={client.id}
                     open={createOpen}
@@ -163,7 +164,7 @@ export default function ClientsShow({
                 />
             )}
 
-            {can.clients.update && (
+            {can.canClientsUpdate && (
                 <EditClientModal
                     client={client}
                     open={editOpen}
@@ -177,7 +178,7 @@ export default function ClientsShow({
                 credential={revealed}
             />
 
-            {can.clients.delete && (
+            {can.canClientsDelete && (
                 <DeleteModal
                     open={deleteClientOpen}
                     onOpenChange={setDeleteClientOpen}
@@ -189,7 +190,7 @@ export default function ClientsShow({
                 />
             )}
 
-            {can.credentials.delete && (
+            {can.canCredentialsDelete && (
                 <DeleteModal
                     open={deleteCredential !== null}
                     onOpenChange={handleDeleteCredentialOpenChange}

@@ -3,7 +3,6 @@
 namespace App\Http\Middleware;
 
 use App\Enums\Permission;
-use App\Models\Client;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -50,40 +49,41 @@ class HandleInertiaRequests extends Middleware
         ];
     }
 
-    /**
-     * @return array{
-     *     clients: array{create: bool, assignCoordinator: bool, update?: bool, delete?: bool},
-     *     credentials: array{view: bool, create: bool, reveal: bool, delete: bool}
-     * }
-     */
     private function permissions(Request $request): array
     {
         $user = $request->user();
+        $can = [];
 
-        $can = [
-            'clients' => [
-                'create' => $user?->can(Permission::ClientsCreate->value) ?? false,
-                'assignCoordinator' => $user?->can(Permission::ClientsAssignCoordinator->value) ?? false,
-            ],
-            'credentials' => [
-                'view' => $user?->can(Permission::CredentialsView->value) ?? false,
-                'create' => $user?->can(Permission::CredentialsCreate->value) ?? false,
-                'reveal' => $user?->can(Permission::CredentialsReveal->value) ?? false,
-                'delete' => $user?->can(Permission::CredentialsDelete->value) ?? false,
-            ],
-        ];
+        if ($request->routeIs('clients.index')) {
+            $can['canClientsCreate'] =
+                $user?->can(Permission::ClientsCreate->value) ?? false;
+        }
 
         if ($request->routeIs('clients.show')) {
-            $client = $request->route('client');
+            $can = [
+                'canClientsCreate' =>
+                    $user?->can(Permission::ClientsCreate->value) ?? false,
 
-            if ($client instanceof Client) {
-                $can['clients']['update'] = $user?->can('update', $client) ?? false;
-                $can['clients']['delete'] = $user?->can('delete', $client) ?? false;
-            }
+                'canClientsAssignCoordinator' =>
+                    $user?->can(Permission::ClientsAssignCoordinator->value) ?? false,
+
+                'canCredentialsView' =>
+                    $user?->can(Permission::CredentialsView->value) ?? false,
+
+                'canCredentialsCreate' =>
+                    $user?->can(Permission::CredentialsCreate->value) ?? false,
+
+                'canCredentialsReveal' =>
+                    $user?->can(Permission::CredentialsReveal->value) ?? false,
+
+                'canCredentialsDelete' =>
+                    $user?->can(Permission::CredentialsDelete->value) ?? false,
+            ];
         }
 
         return $can;
     }
+
 
     /**
      * @return array{coordinators: array<int, array{id: int, name: string}>}|array{}

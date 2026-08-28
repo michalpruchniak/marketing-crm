@@ -34,7 +34,7 @@ export default function ClientsIndex({ clients }: { clients: Client[] }) {
                         description={t('clients.pageDescription')}
                     />
 
-                    {can.clients.create && (
+                    {can.canClientsCreate && (
                         <Button asChild>
                             <Link href={clientsCreate()}>
                                 <Plus className="size-4" />
@@ -55,7 +55,7 @@ export default function ClientsIndex({ clients }: { clients: Client[] }) {
                                 {t('clients.noClientsDescription')}
                             </CardDescription>
                         </CardHeader>
-                        {can.clients.create && (
+                        {can.canClientsCreate && (
                             <CardContent>
                                 <Button asChild>
                                     <Link href={clientsCreate()}>

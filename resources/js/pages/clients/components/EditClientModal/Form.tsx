@@ -72,7 +72,7 @@ export default function EditClientForm({
                 <InputError message={errors.phone} />
             </div>
 
-            {can.clients.assignCoordinator && (
+            {can.canClientsAssignCoordinator && (
                 <div className="grid gap-2">
                     <FieldLabel htmlFor="edit-coordinator_id" required>
                         {t('clients.coordinator')}
