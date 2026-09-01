@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\Role;
 use App\Http\DTO\StoreUserDTO;
 use App\Http\DTO\UpdateUserDTO;
 use App\Models\User;
@@ -58,6 +59,10 @@ class UserService implements UserServiceInterface
             }
 
             $user->syncRoles([$dto->role]);
+
+            if (! in_array($dto->role, Role::assignableAsCoordinatorValues(), true)) {
+                $user->coordinatedClients()->update(['coordinator_id' => null]);
+            }
 
             return $user->load('roles:id,name');
         });

@@ -99,6 +99,74 @@ describe('user management permissions', function () {
                 ])
                 ->assertForbidden();
         });
+
+        it('clears coordinator_id from clients when role changes to non-coordinator', function () {
+            $admin = makeUserWithRole(Role::Admin);
+            $target = makeUserWithRole(Role::Coordinator);
+            $client = makeClient($target);
+
+            expect($client->fresh()->coordinator_id)->toBe($target->id);
+
+            $this->actingAs($admin)
+                ->patch(route('users.update', $target), [
+                    'name' => $target->name,
+                    'email' => $target->email,
+                    'role' => Role::Viewer->value,
+                ])
+                ->assertRedirect(route('users.index'));
+
+            expect($client->fresh()->coordinator_id)->toBeNull();
+        });
+
+        it('keeps coordinator_id on clients when role remains coordinator-eligible', function () {
+            $admin = makeUserWithRole(Role::Admin);
+            $target = makeUserWithRole(Role::Coordinator);
+            $client = makeClient($target);
+
+            $this->actingAs($admin)
+                ->patch(route('users.update', $target), [
+                    'name' => $target->name,
+                    'email' => $target->email,
+                    'role' => Role::Manager->value,
+                ])
+                ->assertRedirect(route('users.index'));
+
+            expect($client->fresh()->coordinator_id)->toBe($target->id);
+        });
+
+        it('does not clear coordinator_id when updating user without changing role eligibility', function () {
+            $admin = makeUserWithRole(Role::Admin);
+            $target = makeUserWithRole(Role::Coordinator);
+            $client = makeClient($target);
+
+            $this->actingAs($admin)
+                ->patch(route('users.update', $target), [
+                    'name' => 'Renamed Coordinator',
+                    'email' => $target->email,
+                    'role' => Role::Coordinator->value,
+                ])
+                ->assertRedirect(route('users.index'));
+
+            expect($client->fresh()->coordinator_id)->toBe($target->id);
+        });
+
+        it('clears coordinator_id from all clients coordinated by the user', function () {
+            $admin = makeUserWithRole(Role::Admin);
+            $target = makeUserWithRole(Role::Manager);
+            $firstClient = makeClient($target);
+            $secondClient = makeClient($target);
+
+            $this->actingAs($admin)
+                ->patch(route('users.update', $target), [
+                    'name' => $target->name,
+                    'email' => $target->email,
+                    'role' => Role::Developer->value,
+                ])
+                ->assertRedirect(route('users.index'));
+
+            expect($firstClient->fresh()->coordinator_id)->toBeNull()
+                ->and($secondClient->fresh()->coordinator_id)->toBeNull();
+        });
     });
 
     describe('banning users', function () {
