@@ -46,7 +46,7 @@ class UserController extends Controller
 
     public function store(StoreUserRequest $request): RedirectResponse
     {
-       $this->userService->create($request->getDTO());
+        $this->userService->create($request->getDTO());
 
         Inertia::flash('toast', [
             'type' => 'success',

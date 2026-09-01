@@ -17,7 +17,6 @@ import { index as clientsIndex } from '@/routes/clients';
 import { index as usersIndex } from '@/routes/users';
 import type { NavItem } from '@/types';
 
-
 export function AppSidebar() {
     const { can } = usePage().props;
 

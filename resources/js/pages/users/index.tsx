@@ -44,9 +44,13 @@ export default function UsersIndex({ users }: { users: UserListItem[] }) {
             return;
         }
 
-        router.patch(UserController.ban.url(user.id), {}, {
-            preserveScroll: true,
-        });
+        router.patch(
+            UserController.ban.url(user.id),
+            {},
+            {
+                preserveScroll: true,
+            },
+        );
     }
 
     return (

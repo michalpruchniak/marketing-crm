@@ -2,10 +2,7 @@ import { Form, Head, usePage } from '@inertiajs/react';
 import { useTranslation } from 'react-i18next';
 import UserController from '@/actions/App/Http/Controllers/UserController';
 import Heading from '@/components/heading';
-import {
-    index as usersIndex,
-    create as usersCreate,
-} from '@/routes/users';
+import { index as usersIndex, create as usersCreate } from '@/routes/users';
 import UserForm from './Form';
 
 export default function UsersCreate() {

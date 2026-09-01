@@ -87,8 +87,7 @@ const en = {
         noUsersTitle: 'No users yet',
         noUsersDescription: 'Create the first user account from this panel.',
         createTitle: 'Add user',
-        createDescription:
-            'Create a new user account and assign a role.',
+        createDescription: 'Create a new user account and assign a role.',
         editTitle: 'Edit user',
         namePlaceholder: 'Jane Doe',
         emailPlaceholder: 'user@example.com',
