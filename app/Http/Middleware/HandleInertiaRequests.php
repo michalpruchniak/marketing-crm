@@ -51,6 +51,7 @@ class HandleInertiaRequests extends Middleware
     }
 
     /**
+     * @return array<string, bool>
      */
     private function permissions(Request $request): array
     {

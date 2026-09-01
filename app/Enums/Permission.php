@@ -2,8 +2,12 @@
 
 namespace App\Enums;
 
+use App\Helpers\EnumHelper;
+
 enum Permission: string
 {
+    use EnumHelper;
+
     case ClientsView = 'clients.view';
     case ClientsCreate = 'clients.create';
     case ClientsUpdateOwn = 'clients.update_own';
