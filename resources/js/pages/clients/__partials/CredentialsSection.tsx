@@ -10,6 +10,9 @@ type Props = {
     credentials: CredentialMeta[];
     revealError: string | null;
     revealLoading: boolean;
+    canCreate: boolean;
+    canReveal: boolean;
+    canDelete: boolean;
     onAdd: () => void;
     onReveal: (credentialId: string) => void;
     onDelete: (credential: CredentialMeta) => void;
@@ -19,6 +22,9 @@ export default function CredentialsSection({
     credentials,
     revealError,
     revealLoading,
+    canCreate,
+    canReveal,
+    canDelete,
     onAdd,
     onReveal,
     onDelete,
@@ -33,10 +39,12 @@ export default function CredentialsSection({
                     title={t('clients.credentialsTitle')}
                     description={t('clients.credentialsDescription')}
                 />
-                <Button type="button" onClick={onAdd}>
-                    <Plus className="size-4" />
-                    {t('clients.addCredential')}
-                </Button>
+                {canCreate && (
+                    <Button type="button" onClick={onAdd}>
+                        <Plus className="size-4" />
+                        {t('clients.addCredential')}
+                    </Button>
+                )}
             </div>
 
             {revealError && (
@@ -54,6 +62,8 @@ export default function CredentialsSection({
                 <CredentialsTable
                     credentials={credentials}
                     revealLoading={revealLoading}
+                    canReveal={canReveal}
+                    canDelete={canDelete}
                     onReveal={onReveal}
                     onDelete={onDelete}
                 />

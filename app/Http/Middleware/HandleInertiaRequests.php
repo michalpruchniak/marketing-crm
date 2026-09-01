@@ -2,6 +2,9 @@
 
 namespace App\Http\Middleware;
 
+use App\Enums\Permission;
+use App\Models\Client;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -42,6 +45,65 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
+            'can' => $this->permissions($request),
+            ...$this->coordinators($request),
+        ];
+    }
+
+    /**
+     * @return array<string, bool>
+     */
+    private function permissions(Request $request): array
+    {
+        $user = $request->user();
+
+        $allPermissions = [
+            'canClientsCreate' => $user?->can(Permission::ClientsCreate->value) ?? false,
+            'canClientsAssignCoordinator' => $user?->can(Permission::ClientsAssignCoordinator->value) ?? false,
+            'canCredentialsView' => $user?->can(Permission::CredentialsView->value) ?? false,
+            'canCredentialsCreate' => $user?->can(Permission::CredentialsCreate->value) ?? false,
+            'canCredentialsReveal' => $user?->can(Permission::CredentialsReveal->value) ?? false,
+            'canCredentialsDelete' => $user?->can(Permission::CredentialsDelete->value) ?? false,
+        ];
+
+        if ($request->routeIs('clients.show')) {
+            $client = $request->route('client');
+
+            if ($client instanceof Client) {
+                $allPermissions['canClientsUpdate'] = $user?->can('update', $client) ?? false;
+                $allPermissions['canClientsDelete'] = $user?->can('delete', $client) ?? false;
+            }
+        }
+
+        return $allPermissions;
+    }
+
+    /**
+     * @return array{coordinators: array<int, array{id: int, name: string}>}|array{}
+     */
+    private function coordinators(Request $request): array
+    {
+        if (! $request->routeIs(['clients.create', 'clients.show'])) {
+            return [];
+        }
+
+        $user = $request->user();
+
+        if (! ($user?->can(Permission::ClientsAssignCoordinator->value) ?? false)) {
+            return [];
+        }
+
+        return [
+            'coordinators' => User::query()
+                ->assignableCoordinators()
+                ->orderBy('name')
+                ->get(['id', 'name'])
+                ->map(static fn (User $coordinator): array => [
+                    'id' => $coordinator->id,
+                    'name' => $coordinator->name,
+                ])
+                ->values()
+                ->all(),
         ];
     }
 }

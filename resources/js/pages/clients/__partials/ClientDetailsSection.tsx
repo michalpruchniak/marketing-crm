@@ -28,6 +28,12 @@ export default function ClientDetailsSection({ client }: Props) {
                 </span>
                 {client.notes ?? '—'}
             </div>
+            <div>
+                <span className="text-muted-foreground">
+                    {t('clients.coordinator')}:{' '}
+                </span>
+                {client.coordinator?.name ?? '—'}
+            </div>
         </section>
     );
 }

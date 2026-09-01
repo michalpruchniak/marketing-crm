@@ -7,7 +7,7 @@ use Illuminate\Contracts\Support\Arrayable;
 /**
  * @implements Arrayable<string, string|int|null>
  */
-final readonly class StoreClientDTO implements Arrayable
+final readonly class UpdateClientDTO implements Arrayable
 {
     /**
      * @param  string  $name
@@ -25,16 +25,21 @@ final readonly class StoreClientDTO implements Arrayable
     ) {}
 
     /**
-     * @return array{name: string, email: string|null, phone: string|null, notes: string|null, coordinator_id: int|null}
+     * @return array{name: string, email: string|null, phone: string|null, notes: string|null, coordinator_id?: int}
      */
     public function toArray(): array
     {
-        return [
+        $data = [
             'name' => $this->name,
             'email' => $this->email,
             'phone' => $this->phone,
             'notes' => $this->notes,
-            'coordinator_id' => $this->coordinatorId,
         ];
+
+        if ($this->coordinatorId !== null) {
+            $data['coordinator_id'] = $this->coordinatorId;
+        }
+
+        return $data;
     }
 }

@@ -3,16 +3,19 @@
 namespace App\Http\Requests\Clients;
 
 use App\Enums\Permission;
-use App\Http\DTO\StoreClientDTO;
+use App\Http\DTO\UpdateClientDTO;
 use App\Models\Client;
 use App\Rules\AssignableCoordinator;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreClientRequest extends FormRequest
+class UpdateClientRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->can('create', Client::class) ?? false;
+        /** @var Client $client */
+        $client = $this->route('client');
+
+        return $this->user()?->can('update', $client) ?? false;
     }
 
     /**
@@ -29,11 +32,11 @@ class StoreClientRequest extends FormRequest
         ];
     }
 
-    public function getDTO(): StoreClientDTO
+    public function getDTO(): UpdateClientDTO
     {
         $canAssignCoordinator = $this->user()?->can(Permission::ClientsAssignCoordinator->value) ?? false;
 
-        return new StoreClientDTO(
+        return new UpdateClientDTO(
             name: $this->validated('name'),
             email: $this->validated('email'),
             phone: $this->validated('phone'),

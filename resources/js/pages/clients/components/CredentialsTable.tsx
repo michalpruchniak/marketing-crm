@@ -6,6 +6,8 @@ import type { CredentialMeta } from '../types';
 type Props = {
     credentials: CredentialMeta[];
     revealLoading: boolean;
+    canReveal: boolean;
+    canDelete: boolean;
     onReveal: (credentialId: string) => void;
     onDelete: (credential: CredentialMeta) => void;
 };
@@ -13,6 +15,8 @@ type Props = {
 export default function CredentialsTable({
     credentials,
     revealLoading,
+    canReveal,
+    canDelete,
     onReveal,
     onDelete,
 }: Props) {
@@ -55,24 +59,30 @@ export default function CredentialsTable({
                             </td>
                             <td className="px-4 py-3">
                                 <div className="flex justify-end gap-2">
-                                    <Button
-                                        type="button"
-                                        variant="outline"
-                                        size="sm"
-                                        disabled={revealLoading}
-                                        onClick={() => onReveal(credential.id)}
-                                    >
-                                        <Eye className="size-4" />
-                                        {t('common.show')}
-                                    </Button>
-                                    <Button
-                                        type="button"
-                                        variant="ghost"
-                                        size="sm"
-                                        onClick={() => onDelete(credential)}
-                                    >
-                                        <Trash2 className="size-4" />
-                                    </Button>
+                                    {canReveal && (
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            size="sm"
+                                            disabled={revealLoading}
+                                            onClick={() =>
+                                                onReveal(credential.id)
+                                            }
+                                        >
+                                            <Eye className="size-4" />
+                                            {t('common.show')}
+                                        </Button>
+                                    )}
+                                    {canDelete && (
+                                        <Button
+                                            type="button"
+                                            variant="ghost"
+                                            size="sm"
+                                            onClick={() => onDelete(credential)}
+                                        >
+                                            <Trash2 className="size-4" />
+                                        </Button>
+                                    )}
                                 </div>
                             </td>
                         </tr>

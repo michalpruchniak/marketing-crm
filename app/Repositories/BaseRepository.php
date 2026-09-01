@@ -90,6 +90,18 @@ abstract class BaseRepository implements BaseRepositoryInterface
 
     /**
      * @param  Model  $model
+     * @param  array<string, mixed>  $data
+     * @return Model
+     */
+    public function update(Model $model, array $data): Model
+    {
+        $model->update($data);
+
+        return $model->refresh();
+    }
+
+    /**
+     * @param  Model  $model
      * @return bool
      */
     public function delete(Model $model): bool

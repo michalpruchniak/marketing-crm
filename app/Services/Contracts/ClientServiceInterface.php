@@ -3,6 +3,7 @@
 namespace App\Services\Contracts;
 
 use App\Http\DTO\StoreClientDTO;
+use App\Http\DTO\UpdateClientDTO;
 use App\Models\Client;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -27,6 +28,13 @@ interface ClientServiceInterface
      * @throws ModelNotFoundException
      */
     public function findOrFail(string $id): Client;
+
+    /**
+     * @param  Client  $client
+     * @param  UpdateClientDTO  $dto
+     * @return Client
+     */
+    public function update(Client $client, UpdateClientDTO $dto): Client;
 
     /**
      * @param  Client  $client
