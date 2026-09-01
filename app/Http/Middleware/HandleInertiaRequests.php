@@ -49,6 +49,9 @@ class HandleInertiaRequests extends Middleware
         ];
     }
 
+    /**
+     * @return array<string, bool>
+     */
     private function permissions(Request $request): array
     {
         $user = $request->user();
@@ -61,29 +64,22 @@ class HandleInertiaRequests extends Middleware
 
         if ($request->routeIs('clients.show')) {
             $can = [
-                'canClientsCreate' =>
-                    $user?->can(Permission::ClientsCreate->value) ?? false,
+                'canClientsCreate' => $user?->can(Permission::ClientsCreate->value) ?? false,
 
-                'canClientsAssignCoordinator' =>
-                    $user?->can(Permission::ClientsAssignCoordinator->value) ?? false,
+                'canClientsAssignCoordinator' => $user?->can(Permission::ClientsAssignCoordinator->value) ?? false,
 
-                'canCredentialsView' =>
-                    $user?->can(Permission::CredentialsView->value) ?? false,
+                'canCredentialsView' => $user?->can(Permission::CredentialsView->value) ?? false,
 
-                'canCredentialsCreate' =>
-                    $user?->can(Permission::CredentialsCreate->value) ?? false,
+                'canCredentialsCreate' => $user?->can(Permission::CredentialsCreate->value) ?? false,
 
-                'canCredentialsReveal' =>
-                    $user?->can(Permission::CredentialsReveal->value) ?? false,
+                'canCredentialsReveal' => $user?->can(Permission::CredentialsReveal->value) ?? false,
 
-                'canCredentialsDelete' =>
-                    $user?->can(Permission::CredentialsDelete->value) ?? false,
+                'canCredentialsDelete' => $user?->can(Permission::CredentialsDelete->value) ?? false,
             ];
         }
 
         return $can;
     }
-
 
     /**
      * @return array{coordinators: array<int, array{id: int, name: string}>}|array{}
