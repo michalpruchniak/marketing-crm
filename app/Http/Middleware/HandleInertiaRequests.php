@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Enums\Permission;
+use App\Enums\Role;
 use App\Models\Client;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -47,6 +48,7 @@ class HandleInertiaRequests extends Middleware
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
             'can' => $this->permissions($request),
             ...$this->coordinators($request),
+            ...$this->roles($request),
         ];
     }
 
@@ -64,6 +66,11 @@ class HandleInertiaRequests extends Middleware
             'canCredentialsCreate' => $user?->can(Permission::CredentialsCreate->value) ?? false,
             'canCredentialsReveal' => $user?->can(Permission::CredentialsReveal->value) ?? false,
             'canCredentialsDelete' => $user?->can(Permission::CredentialsDelete->value) ?? false,
+            'canUsersView' => $user?->can(Permission::UsersView->value) ?? false,
+            'canUsersCreate' => $user?->can(Permission::UsersCreate->value) ?? false,
+            'canUsersUpdate' => $user?->can(Permission::UsersUpdate->value) ?? false,
+            'canUsersDelete' => $user?->can(Permission::UsersDelete->value) ?? false,
+            'canUsersBan' => $user?->can(Permission::UsersBan->value) ?? false,
         ];
 
         if ($request->routeIs('clients.show')) {
@@ -104,6 +111,33 @@ class HandleInertiaRequests extends Middleware
                 ])
                 ->values()
                 ->all(),
+        ];
+    }
+
+    /**
+     * @return array{roles: array<int, array{value: string, label: string}>}|array{}
+     */
+    private function roles(Request $request): array
+    {
+        if (! $request->routeIs(['users.index', 'users.create', 'users.edit'])) {
+            return [];
+        }
+
+        $user = $request->user();
+
+        if (! ($user?->can(Permission::UsersCreate->value) ?? false)
+            && ! ($user?->can(Permission::UsersUpdate->value) ?? false)) {
+            return [];
+        }
+
+        return [
+            'roles' => array_map(
+                static fn (Role $role): array => [
+                    'value' => $role->value,
+                    'label' => ucfirst($role->value),
+                ],
+                Role::cases(),
+            ),
         ];
     }
 }

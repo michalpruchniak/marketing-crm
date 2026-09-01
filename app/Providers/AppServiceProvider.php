@@ -6,12 +6,16 @@ use App\Repositories\ClientRepository;
 use App\Repositories\Contracts\ClientRepositoryInterface;
 use App\Repositories\Contracts\CredentialPayloadRepositoryInterface;
 use App\Repositories\Contracts\CredentialRepositoryInterface;
+use App\Repositories\Contracts\UserRepositoryInterface;
 use App\Repositories\CredentialPayloadRepository;
 use App\Repositories\CredentialRepository;
+use App\Repositories\UserRepository;
 use App\Services\ClientService;
 use App\Services\Contracts\ClientServiceInterface;
 use App\Services\Contracts\CredentialServiceInterface;
+use App\Services\Contracts\UserServiceInterface;
 use App\Services\CredentialService;
+use App\Services\UserService;
 use App\Supports\SecretsStorage\Clients\HashicorpVaultClient;
 use App\Supports\SecretsStorage\Contracts\PasswordSecretStorageInterface;
 use App\Supports\SecretsStorage\Factories\SecretsDriverStrategyFactory;
@@ -45,6 +49,8 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->bind(CredentialServiceInterface::class, CredentialService::class);
         $this->app->bind(ClientServiceInterface::class, ClientService::class);
+        $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
+        $this->app->bind(UserServiceInterface::class, UserService::class);
     }
 
     /**

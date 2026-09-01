@@ -79,6 +79,35 @@ const en = {
         // RevealCredentialModal
         revealModalTitle: 'Credential',
     },
+
+    users: {
+        pageTitle: 'Users',
+        pageDescription: 'Manage application users and their roles.',
+        addUser: 'Add user',
+        noUsersTitle: 'No users yet',
+        noUsersDescription: 'Create the first user account from this panel.',
+        createTitle: 'Add user',
+        createDescription: 'Create a new user account and assign a role.',
+        editTitle: 'Edit user',
+        editDescription: 'Update user details and assign a role.',
+        namePlaceholder: 'Jane Doe',
+        emailPlaceholder: 'user@example.com',
+        passwordPlaceholder: 'Password',
+        passwordConfirmation: 'Confirm password',
+        passwordConfirmationPlaceholder: 'Repeat password',
+        newPassword: 'New password',
+        newPasswordPlaceholder: 'Leave blank to keep current password',
+        role: 'Role',
+        rolePlaceholder: 'Select a role',
+        status: 'Status',
+        active: 'Active',
+        banned: 'Banned',
+        ban: 'Ban',
+        unban: 'Unban',
+        deleteConfirmTitle: 'Delete user',
+        deleteConfirmDescription:
+            'Are you sure you want to delete "{{name}}"? This action cannot be undone.',
+    },
 } as const;
 
 export default en;

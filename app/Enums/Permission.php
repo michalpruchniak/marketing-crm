@@ -20,4 +20,10 @@ enum Permission: string
     case CredentialsCreate = 'credentials.create';
     case CredentialsReveal = 'credentials.reveal';
     case CredentialsDelete = 'credentials.delete';
+
+    case UsersView = 'users.view';
+    case UsersCreate = 'users.create';
+    case UsersUpdate = 'users.update';
+    case UsersDelete = 'users.delete';
+    case UsersBan = 'users.ban';
 }

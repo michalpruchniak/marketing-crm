@@ -22,10 +22,19 @@ declare module '@inertiajs/core' {
                 canCredentialsDelete: boolean;
                 canClientsUpdate?: boolean;
                 canClientsDelete?: boolean;
+                canUsersView: boolean;
+                canUsersCreate: boolean;
+                canUsersUpdate: boolean;
+                canUsersDelete: boolean;
+                canUsersBan: boolean;
             };
             coordinators?: Array<{
                 id: number;
                 name: string;
+            }>;
+            roles?: Array<{
+                value: string;
+                label: string;
             }>;
             [key: string]: unknown;
         };
