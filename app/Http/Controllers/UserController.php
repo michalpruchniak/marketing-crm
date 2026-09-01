@@ -44,6 +44,22 @@ class UserController extends Controller
         return Inertia::render('users/create');
     }
 
+    public function edit(User $user): Response
+    {
+        $this->authorize('update', $user);
+
+        $user->load('roles:id,name');
+
+        return Inertia::render('users/edit', [
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'role' => $user->roles->first()?->name ?? '',
+            ],
+        ]);
+    }
+
     public function store(StoreUserRequest $request): RedirectResponse
     {
         $this->userService->create($request->getDTO());

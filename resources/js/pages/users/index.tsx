@@ -14,15 +14,14 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
+import i18n from '@/i18n';
 import { create as usersCreate, index as usersIndex } from '@/routes/users';
-import EditUserModal from './components/EditUserModal';
 import type { UserListItem } from './types';
 
 export default function UsersIndex({ users }: { users: UserListItem[] }) {
     const { t } = useTranslation();
-    const { auth, can, roles = [] } = usePage().props;
+    const { auth, can } = usePage().props;
     const currentUserId = auth.user?.id ?? null;
-    const [editUser, setEditUser] = useState<UserListItem | null>(null);
     const [deleteUser, setDeleteUser] = useState<UserListItem | null>(null);
 
     function confirmDelete() {
@@ -148,17 +147,20 @@ export default function UsersIndex({ users }: { users: UserListItem[] }) {
                                                 <div className="flex justify-end gap-2">
                                                     {can.canUsersUpdate && (
                                                         <Button
-                                                            type="button"
+                                                            asChild
                                                             variant="outline"
                                                             size="sm"
-                                                            onClick={() =>
-                                                                setEditUser(
-                                                                    user,
-                                                                )
-                                                            }
                                                         >
-                                                            <Pencil className="size-4" />
-                                                            {t('common.edit')}
+                                                            <Link
+                                                                href={UserController.edit.url(
+                                                                    user.id,
+                                                                )}
+                                                            >
+                                                                <Pencil className="size-4" />
+                                                                {t(
+                                                                    'common.edit',
+                                                                )}
+                                                            </Link>
                                                         </Button>
                                                     )}
                                                     {can.canUsersBan &&
@@ -216,19 +218,6 @@ export default function UsersIndex({ users }: { users: UserListItem[] }) {
                 )}
             </div>
 
-            {editUser && can.canUsersUpdate && (
-                <EditUserModal
-                    user={editUser}
-                    roles={roles}
-                    open={editUser !== null}
-                    onOpenChange={(open) => {
-                        if (!open) {
-                            setEditUser(null);
-                        }
-                    }}
-                />
-            )}
-
             {deleteUser && can.canUsersDelete && (
                 <DeleteModal
                     open={deleteUser !== null}
@@ -251,7 +240,7 @@ export default function UsersIndex({ users }: { users: UserListItem[] }) {
 UsersIndex.layout = {
     breadcrumbs: [
         {
-            title: 'Users',
+            title: i18n.t('users.pageTitle'),
             href: usersIndex(),
         },
     ],

@@ -67,6 +67,33 @@ describe('user management permissions', function () {
     });
 
     describe('updating users', function () {
+        it('allows admin to view edit user page', function () {
+            $admin = makeUserWithRole(Role::Admin);
+            $target = User::factory()->create();
+            $target->assignRole(Role::Viewer->value);
+
+            $this->actingAs($admin)
+                ->get(route('users.edit', $target))
+                ->assertOk()
+                ->assertInertia(fn ($page) => $page
+                    ->component('users/edit')
+                    ->has('user', fn ($user) => $user
+                        ->where('id', $target->id)
+                        ->where('name', $target->name)
+                        ->where('email', $target->email)
+                        ->where('role', Role::Viewer->value)
+                        ->etc()));
+        });
+
+        it('denies coordinator from viewing edit user page', function () {
+            $coordinator = makeUserWithRole(Role::Coordinator);
+            $target = User::factory()->create();
+
+            $this->actingAs($coordinator)
+                ->get(route('users.edit', $target))
+                ->assertForbidden();
+        });
+
         it('allows admin to update a user and change role', function () {
             $admin = makeUserWithRole(Role::Admin);
             $target = User::factory()->create();

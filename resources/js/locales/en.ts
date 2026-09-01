@@ -89,6 +89,7 @@ const en = {
         createTitle: 'Add user',
         createDescription: 'Create a new user account and assign a role.',
         editTitle: 'Edit user',
+        editDescription: 'Update user details and assign a role.',
         namePlaceholder: 'Jane Doe',
         emailPlaceholder: 'user@example.com',
         passwordPlaceholder: 'Password',

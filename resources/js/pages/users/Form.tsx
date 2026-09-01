@@ -19,6 +19,8 @@ type Props = {
     processing: boolean;
     errors: FormErrors;
     roles: RoleOption[];
+    defaultName?: string;
+    defaultEmail?: string;
     defaultRole?: string;
     requirePassword?: boolean;
     idPrefix?: string;
@@ -28,6 +30,8 @@ export default function UserForm({
     processing,
     errors,
     roles,
+    defaultName = '',
+    defaultEmail = '',
     defaultRole = '',
     requirePassword = true,
     idPrefix = '',
@@ -45,6 +49,7 @@ export default function UserForm({
                     name="name"
                     required
                     autoFocus={idPrefix === ''}
+                    defaultValue={defaultName}
                     placeholder={t('users.namePlaceholder')}
                 />
                 <InputError message={errors.name} />
@@ -59,6 +64,7 @@ export default function UserForm({
                     type="email"
                     name="email"
                     required
+                    defaultValue={defaultEmail}
                     placeholder={t('users.emailPlaceholder')}
                 />
                 <InputError message={errors.email} />
@@ -69,14 +75,20 @@ export default function UserForm({
                     htmlFor={`${idPrefix}password`}
                     required={requirePassword}
                 >
-                    {t('common.password')}
+                    {requirePassword
+                        ? t('common.password')
+                        : t('users.newPassword')}
                 </FieldLabel>
                 <PasswordInput
                     id={`${idPrefix}password`}
                     name="password"
                     required={requirePassword}
                     autoComplete="new-password"
-                    placeholder={t('users.passwordPlaceholder')}
+                    placeholder={
+                        requirePassword
+                            ? t('users.passwordPlaceholder')
+                            : t('users.newPasswordPlaceholder')
+                    }
                 />
                 <InputError message={errors.password} />
             </div>
@@ -93,7 +105,11 @@ export default function UserForm({
                     name="password_confirmation"
                     required={requirePassword}
                     autoComplete="new-password"
-                    placeholder={t('users.passwordConfirmationPlaceholder')}
+                    placeholder={
+                        requirePassword
+                            ? t('users.passwordConfirmationPlaceholder')
+                            : t('users.newPasswordPlaceholder')
+                    }
                 />
                 <InputError message={errors.password_confirmation} />
             </div>

@@ -119,7 +119,7 @@ class HandleInertiaRequests extends Middleware
      */
     private function roles(Request $request): array
     {
-        if (! $request->routeIs(['users.index', 'users.create'])) {
+        if (! $request->routeIs(['users.index', 'users.create', 'users.edit'])) {
             return [];
         }
 

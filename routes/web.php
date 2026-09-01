@@ -26,7 +26,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('clients/{client}/credentials/{credential}', [ClientCredentialController::class, 'destroy'])
         ->name('clients.credentials.destroy');
 
-    Route::resource('users', UserController::class)->except(['show', 'edit']);
+    Route::resource('users', UserController::class)->except(['show']);
     Route::patch('users/{user}/ban', [UserController::class, 'ban'])->name('users.ban');
     Route::delete('users/{user}/ban', [UserController::class, 'unban'])->name('users.unban');
 });
