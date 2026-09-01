@@ -176,15 +176,15 @@ describe('client permissions', function () {
     });
 
     describe('deleting clients', function () {
-        it('allows a coordinator to delete their own client', function () {
+        it('denies a coordinator from deleting their own client', function () {
             $coordinator = makeUserWithRole(Role::Coordinator);
             $client = makeClient($coordinator);
 
             $this->actingAs($coordinator)
                 ->delete(route('clients.destroy', $client))
-                ->assertRedirect(route('clients.index'));
+                ->assertForbidden();
 
-            expect(Client::query()->find($client->id))->toBeNull();
+            expect(Client::query()->find($client->id))->not->toBeNull();
         });
 
         it('denies a coordinator from deleting another coordinators client', function () {
@@ -210,21 +210,15 @@ describe('client permissions', function () {
             expect(Client::query()->find($client->id))->toBeNull();
         });
 
-        it('allows manager to delete only their own client', function () {
+        it('allows manager to delete any client', function () {
             $manager = makeUserWithRole(Role::Manager);
-            $ownClient = makeClient($manager);
-            $foreignClient = makeClient(makeUserWithRole(Role::Coordinator));
+            $client = makeClient(makeUserWithRole(Role::Coordinator));
 
             $this->actingAs($manager)
-                ->delete(route('clients.destroy', $ownClient))
+                ->delete(route('clients.destroy', $client))
                 ->assertRedirect(route('clients.index'));
 
-            $this->actingAs($manager)
-                ->delete(route('clients.destroy', $foreignClient))
-                ->assertForbidden();
-
-            expect(Client::query()->find($ownClient->id))->toBeNull()
-                ->and(Client::query()->find($foreignClient->id))->not->toBeNull();
+            expect(Client::query()->find($client->id))->toBeNull();
         });
 
         it('denies viewer from deleting a client', function () {
