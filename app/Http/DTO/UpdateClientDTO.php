@@ -34,8 +34,11 @@ final readonly class UpdateClientDTO implements Arrayable
             'email' => $this->email,
             'phone' => $this->phone,
             'notes' => $this->notes,
-            'coordinator_id' => $this->coordinatorId ?? null,
         ];
+
+        if ($this->coordinatorId !== null) {
+            $data['coordinator_id'] = $this->coordinatorId;
+        }
 
         return $data;
     }

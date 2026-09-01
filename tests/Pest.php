@@ -44,7 +44,61 @@ expect()->extend('toBeOne', function () {
 |
 */
 
-function something()
+use App\Enums\Role;
+use App\Http\DTO\SecretPayloadDTO;
+use App\Models\Client;
+use App\Models\Credential;
+use App\Models\CredentialPayload;
+use App\Models\User;
+use App\Supports\SecretsStorage\Enums\SecretsDriver;
+use Illuminate\Support\Str;
+
+function makeUserWithRole(Role $role): User
 {
-    // ..
+    $user = User::factory()->create();
+    $user->assignRole($role->value);
+
+    return $user;
+}
+
+function makeClient(?User $coordinator = null): Client
+{
+    $coordinator ??= User::factory()->create();
+
+    return Client::factory()->forCoordinator($coordinator)->create();
+}
+
+/**
+ * @param  array<string, mixed>  $overrides
+ * @return array<string, mixed>
+ */
+function validClientPayload(array $overrides = []): array
+{
+    return array_merge([
+        'name' => 'Updated Client',
+        'email' => 'updated@example.com',
+        'phone' => null,
+        'notes' => null,
+    ], $overrides);
+}
+
+function makeCredentialWithPayload(Client $client, User $user): Credential
+{
+    $uuid = (string) Str::ulid();
+
+    CredentialPayload::create([
+        'uuid' => $uuid,
+        'encrypted_payload' => CredentialPayload::encryptPayload(
+            new SecretPayloadDTO(login: 'login', password: 'secret'),
+        ),
+    ]);
+
+    return Credential::create([
+        'client_id' => $client->id,
+        'user_id' => $user->id,
+        'uuid' => $uuid,
+        'type' => SecretsDriver::Database,
+        'name' => 'Test Credential',
+        'description' => 'Test description',
+    ]);
 }
