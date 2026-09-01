@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Enums\Permission;
+use App\Models\Client;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -50,35 +51,30 @@ class HandleInertiaRequests extends Middleware
     }
 
     /**
-     * @return array<string, bool>
      */
     private function permissions(Request $request): array
     {
         $user = $request->user();
-        $can = [];
 
-        if ($request->routeIs('clients.index')) {
-            $can['canClientsCreate'] =
-                $user?->can(Permission::ClientsCreate->value) ?? false;
-        }
+        $allPermissions = [
+            'canClientsCreate' => $user?->can(Permission::ClientsCreate->value) ?? false,
+            'canClientsAssignCoordinator' => $user?->can(Permission::ClientsAssignCoordinator->value) ?? false,
+            'canCredentialsView' => $user?->can(Permission::CredentialsView->value) ?? false,
+            'canCredentialsCreate' => $user?->can(Permission::CredentialsCreate->value) ?? false,
+            'canCredentialsReveal' => $user?->can(Permission::CredentialsReveal->value) ?? false,
+            'canCredentialsDelete' => $user?->can(Permission::CredentialsDelete->value) ?? false,
+        ];
 
         if ($request->routeIs('clients.show')) {
-            $can = [
-                'canClientsCreate' => $user?->can(Permission::ClientsCreate->value) ?? false,
+            $client = $request->route('client');
 
-                'canClientsAssignCoordinator' => $user?->can(Permission::ClientsAssignCoordinator->value) ?? false,
-
-                'canCredentialsView' => $user?->can(Permission::CredentialsView->value) ?? false,
-
-                'canCredentialsCreate' => $user?->can(Permission::CredentialsCreate->value) ?? false,
-
-                'canCredentialsReveal' => $user?->can(Permission::CredentialsReveal->value) ?? false,
-
-                'canCredentialsDelete' => $user?->can(Permission::CredentialsDelete->value) ?? false,
-            ];
+            if ($client instanceof Client) {
+                $allPermissions['canClientsUpdate'] = $user?->can('update', $client) ?? false;
+                $allPermissions['canClientsDelete'] = $user?->can('delete', $client) ?? false;
+            }
         }
 
-        return $can;
+        return $allPermissions;
     }
 
     /**
