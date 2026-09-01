@@ -55,7 +55,7 @@ class UserController extends Controller
                 'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
-                'role' => $user->roles->first()?->name ?? '',
+                'role' => $user->roles->pluck('name')->first() ?? '',
             ],
         ]);
     }

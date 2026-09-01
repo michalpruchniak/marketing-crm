@@ -13,8 +13,8 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
 import i18n from '@/i18n';
+import { cn } from '@/lib/utils';
 import { create as usersCreate, index as usersIndex } from '@/routes/users';
 import type { UserListItem } from './types';
 

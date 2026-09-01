@@ -3,9 +3,7 @@ import { useTranslation } from 'react-i18next';
 import UserController from '@/actions/App/Http/Controllers/UserController';
 import Heading from '@/components/heading';
 import i18n from '@/i18n';
-import {
-    index as usersIndex,
-} from '@/routes/users';
+import { index as usersIndex } from '@/routes/users';
 import UserForm from './Form';
 import type { UserFormData } from './types';
 
