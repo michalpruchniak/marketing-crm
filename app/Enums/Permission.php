@@ -16,28 +16,4 @@ enum Permission: string
     case CredentialsCreate = 'credentials.create';
     case CredentialsReveal = 'credentials.reveal';
     case CredentialsDelete = 'credentials.delete';
-
-    /**
-     * @return list<string>
-     */
-    public static function values(): array
-    {
-        return array_map(
-            static fn (self $permission): string => $permission->value,
-            self::cases(),
-        );
-    }
-
-    /**
-     * @return list<string>
-     */
-    public static function credentialValues(): array
-    {
-        return [
-            self::CredentialsView->value,
-            self::CredentialsCreate->value,
-            self::CredentialsReveal->value,
-            self::CredentialsDelete->value,
-        ];
-    }
 }

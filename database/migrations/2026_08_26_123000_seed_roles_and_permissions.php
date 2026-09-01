@@ -36,7 +36,10 @@ return new class extends Migration
                 PermissionEnum::ClientsUpdateAny->value,
                 PermissionEnum::ClientsDeleteOwn->value,
                 PermissionEnum::ClientsAssignCoordinator->value,
-                ...PermissionEnum::credentialValues(),
+                PermissionEnum::CredentialsView->value,
+                PermissionEnum::CredentialsCreate->value,
+                PermissionEnum::CredentialsReveal->value,
+                PermissionEnum::CredentialsDelete->value,
             ],
 
             RoleEnum::Coordinator->value => [
@@ -44,22 +47,34 @@ return new class extends Migration
                 PermissionEnum::ClientsCreate->value,
                 PermissionEnum::ClientsUpdateOwn->value,
                 PermissionEnum::ClientsDeleteOwn->value,
-                ...PermissionEnum::credentialValues(),
+                PermissionEnum::CredentialsView->value,
+                PermissionEnum::CredentialsCreate->value,
+                PermissionEnum::CredentialsReveal->value,
+                PermissionEnum::CredentialsDelete->value,
             ],
 
             RoleEnum::Developer->value => [
                 PermissionEnum::ClientsView->value,
-                ...PermissionEnum::credentialValues(),
+                PermissionEnum::CredentialsView->value,
+                PermissionEnum::CredentialsCreate->value,
+                PermissionEnum::CredentialsReveal->value,
+                PermissionEnum::CredentialsDelete->value,
             ],
 
             RoleEnum::Sales->value => [
                 PermissionEnum::ClientsView->value,
-                ...PermissionEnum::credentialValues(),
+                PermissionEnum::CredentialsView->value,
+                PermissionEnum::CredentialsCreate->value,
+                PermissionEnum::CredentialsReveal->value,
+                PermissionEnum::CredentialsDelete->value,
             ],
 
             RoleEnum::Marketer->value => [
                 PermissionEnum::ClientsView->value,
-                ...PermissionEnum::credentialValues(),
+                PermissionEnum::CredentialsView->value,
+                PermissionEnum::CredentialsCreate->value,
+                PermissionEnum::CredentialsReveal->value,
+                PermissionEnum::CredentialsDelete->value,
             ],
 
             RoleEnum::Viewer->value => [
