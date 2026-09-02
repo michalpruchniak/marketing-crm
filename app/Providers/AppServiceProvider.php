@@ -6,15 +6,21 @@ use App\Repositories\ClientRepository;
 use App\Repositories\Contracts\ClientRepositoryInterface;
 use App\Repositories\Contracts\CredentialPayloadRepositoryInterface;
 use App\Repositories\Contracts\CredentialRepositoryInterface;
+use App\Repositories\Contracts\LeadRepositoryInterface;
 use App\Repositories\Contracts\UserRepositoryInterface;
 use App\Repositories\CredentialPayloadRepository;
 use App\Repositories\CredentialRepository;
+use App\Repositories\LeadRepository;
 use App\Repositories\UserRepository;
 use App\Services\ClientService;
 use App\Services\Contracts\ClientServiceInterface;
 use App\Services\Contracts\CredentialServiceInterface;
+use App\Services\Contracts\FormOptionsServiceInterface;
+use App\Services\Contracts\LeadServiceInterface;
 use App\Services\Contracts\UserServiceInterface;
 use App\Services\CredentialService;
+use App\Services\FormOptionsService;
+use App\Services\LeadService;
 use App\Services\UserService;
 use App\Supports\SecretsStorage\Clients\HashicorpVaultClient;
 use App\Supports\SecretsStorage\Contracts\PasswordSecretStorageInterface;
@@ -51,6 +57,9 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(ClientServiceInterface::class, ClientService::class);
         $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
         $this->app->bind(UserServiceInterface::class, UserService::class);
+        $this->app->bind(LeadRepositoryInterface::class, LeadRepository::class);
+        $this->app->bind(LeadServiceInterface::class, LeadService::class);
+        $this->app->bind(FormOptionsServiceInterface::class, FormOptionsService::class);
     }
 
     /**

@@ -3,9 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Enums\Permission;
-use App\Enums\Role;
 use App\Models\Client;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -47,8 +45,6 @@ class HandleInertiaRequests extends Middleware
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
             'can' => $this->permissions($request),
-            ...$this->coordinators($request),
-            ...$this->roles($request),
         ];
     }
 
@@ -71,6 +67,9 @@ class HandleInertiaRequests extends Middleware
             'canUsersUpdate' => $user?->can(Permission::UsersUpdate->value) ?? false,
             'canUsersDelete' => $user?->can(Permission::UsersDelete->value) ?? false,
             'canUsersBan' => $user?->can(Permission::UsersBan->value) ?? false,
+            'canLeadsView' => $user?->can(Permission::LeadsView->value) ?? false,
+            'canLeadsCreate' => $user?->can(Permission::LeadsCreate->value) ?? false,
+            'canLeadsUpdateAny' => $user?->can(Permission::LeadsUpdateAny->value) ?? false,
         ];
 
         if ($request->routeIs('clients.show')) {
@@ -83,61 +82,5 @@ class HandleInertiaRequests extends Middleware
         }
 
         return $allPermissions;
-    }
-
-    /**
-     * @return array{coordinators: array<int, array{id: int, name: string}>}|array{}
-     */
-    private function coordinators(Request $request): array
-    {
-        if (! $request->routeIs(['clients.create', 'clients.show'])) {
-            return [];
-        }
-
-        $user = $request->user();
-
-        if (! ($user?->can(Permission::ClientsAssignCoordinator->value) ?? false)) {
-            return [];
-        }
-
-        return [
-            'coordinators' => User::query()
-                ->assignableCoordinators()
-                ->orderBy('name')
-                ->get(['id', 'name'])
-                ->map(static fn (User $coordinator): array => [
-                    'id' => $coordinator->id,
-                    'name' => $coordinator->name,
-                ])
-                ->values()
-                ->all(),
-        ];
-    }
-
-    /**
-     * @return array{roles: array<int, array{value: string, label: string}>}|array{}
-     */
-    private function roles(Request $request): array
-    {
-        if (! $request->routeIs(['users.index', 'users.create', 'users.edit'])) {
-            return [];
-        }
-
-        $user = $request->user();
-
-        if (! ($user?->can(Permission::UsersCreate->value) ?? false)
-            && ! ($user?->can(Permission::UsersUpdate->value) ?? false)) {
-            return [];
-        }
-
-        return [
-            'roles' => array_map(
-                static fn (Role $role): array => [
-                    'value' => $role->value,
-                    'label' => ucfirst($role->value),
-                ],
-                Role::cases(),
-            ),
-        ];
     }
 }

@@ -26,4 +26,9 @@ enum Permission: string
     case UsersUpdate = 'users.update';
     case UsersDelete = 'users.delete';
     case UsersBan = 'users.ban';
+
+    case LeadsView = 'leads.view';
+    case LeadsCreate = 'leads.create';
+    case LeadsUpdateOwn = 'leads.update_own';
+    case LeadsUpdateAny = 'leads.update_any';
 }

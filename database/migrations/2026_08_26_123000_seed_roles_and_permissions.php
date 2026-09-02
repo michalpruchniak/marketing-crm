@@ -40,6 +40,10 @@ return new class extends Migration
                 PermissionEnum::CredentialsCreate->value,
                 PermissionEnum::CredentialsReveal->value,
                 PermissionEnum::CredentialsDelete->value,
+                PermissionEnum::LeadsView->value,
+                PermissionEnum::LeadsCreate->value,
+                PermissionEnum::LeadsUpdateOwn->value,
+                PermissionEnum::LeadsUpdateAny->value,
             ],
 
             RoleEnum::Coordinator->value => [
@@ -66,6 +70,9 @@ return new class extends Migration
                 PermissionEnum::CredentialsCreate->value,
                 PermissionEnum::CredentialsReveal->value,
                 PermissionEnum::CredentialsDelete->value,
+                PermissionEnum::LeadsView->value,
+                PermissionEnum::LeadsCreate->value,
+                PermissionEnum::LeadsUpdateOwn->value,
             ],
 
             RoleEnum::Marketer->value => [

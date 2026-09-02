@@ -108,6 +108,35 @@ const en = {
         deleteConfirmDescription:
             'Are you sure you want to delete "{{name}}"? This action cannot be undone.',
     },
+
+    leads: {
+        pageTitle: 'Leads',
+        pageDescription: 'Track sales leads and their status.',
+        addLead: 'Add lead',
+        noLeadsTitle: 'No leads yet',
+        noLeadsDescription: 'Create your first lead to start tracking prospects.',
+        createTitle: 'Add lead',
+        createDescription: 'Create a new lead and assign its initial status.',
+        editTitle: 'Edit lead',
+        editDescription: 'Update lead details and status.',
+        namePlaceholder: 'Acme Sp. z o.o.',
+        emailPlaceholder: 'contact@example.com',
+        phonePlaceholder: '+48 123 456 789',
+        notesPlaceholder: 'Notes about this lead',
+        label: 'Status',
+        onlyMyLeads: 'Only my leads',
+        salesPerson: 'Sales person',
+        salesPersonPlaceholder: 'Unassigned — select a sales person',
+        labels: {
+            new: 'New',
+            to_contact: 'To contact',
+            interested: 'Interested',
+            offer_sent: 'Offer sent',
+            negotiations: 'Negotiations',
+            rejected: 'Rejected',
+            acquired: 'Acquired',
+        },
+    },
 } as const;
 
 export default en;

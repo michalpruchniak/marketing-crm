@@ -46,6 +46,14 @@ class User extends Authenticatable
     }
 
     /**
+     * @return HasMany<Lead, $this>
+     */
+    public function leads(): HasMany
+    {
+        return $this->hasMany(Lead::class, 'sales_id');
+    }
+
+    /**
      * @param  Builder<User>  $query
      * @return Builder<User>
      */

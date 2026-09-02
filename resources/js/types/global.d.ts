@@ -27,6 +27,9 @@ declare module '@inertiajs/core' {
                 canUsersUpdate: boolean;
                 canUsersDelete: boolean;
                 canUsersBan: boolean;
+                canLeadsView: boolean;
+                canLeadsCreate: boolean;
+                canLeadsUpdateAny: boolean;
             };
             coordinators?: Array<{
                 id: number;
@@ -35,6 +38,13 @@ declare module '@inertiajs/core' {
             roles?: Array<{
                 value: string;
                 label: string;
+            }>;
+            leadLabels?: Array<{
+                value: string;
+            }>;
+            salesPersons?: Array<{
+                id: number;
+                name: string;
             }>;
             [key: string]: unknown;
         };
