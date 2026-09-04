@@ -62,6 +62,40 @@ class User extends Authenticatable
         return $query->role(Role::assignableAsCoordinatorValues());
     }
 
+    /**
+     * @return list<array{id: int, name: string}>
+     */
+    public static function coordinators(): array
+    {
+        return self::query()
+            ->assignableCoordinators()
+            ->orderBy('name')
+            ->get(['id', 'name'])
+            ->map(static fn (User $coordinator): array => [
+                'id' => $coordinator->id,
+                'name' => $coordinator->name,
+            ])
+            ->values()
+            ->all();
+    }
+
+    /**
+     * @return list<array{id: int, name: string}>
+     */
+    public static function salesPersons(): array
+    {
+        return self::query()
+            ->role(Role::Sales->value)
+            ->orderBy('name')
+            ->get(['id', 'name'])
+            ->map(static fn (User $salesPerson): array => [
+                'id' => $salesPerson->id,
+                'name' => $salesPerson->name,
+            ])
+            ->values()
+            ->all();
+    }
+
     public function isBanned(): bool
     {
         return $this->banned_at !== null;
