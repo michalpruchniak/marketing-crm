@@ -6,9 +6,9 @@ use App\Enums\LeadLabel;
 use App\Enums\Permission;
 use App\Http\DTO\StoreLeadDTO;
 use App\Models\Lead;
+use App\Rules\AssignableSalesPerson;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use App\Rules\AssignableSalesPerson;
 
 class StoreLeadRequest extends FormRequest
 {

@@ -3,7 +3,6 @@
 use App\Enums\LeadLabel;
 use App\Enums\Role;
 use App\Models\Lead;
-use App\Models\User;
 
 describe('lead permissions', function () {
     describe('viewing leads', function () {

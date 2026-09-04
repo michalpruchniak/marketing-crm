@@ -114,7 +114,8 @@ const en = {
         pageDescription: 'Track sales leads and their status.',
         addLead: 'Add lead',
         noLeadsTitle: 'No leads yet',
-        noLeadsDescription: 'Create your first lead to start tracking prospects.',
+        noLeadsDescription:
+            'Create your first lead to start tracking prospects.',
         createTitle: 'Add lead',
         createDescription: 'Create a new lead and assign its initial status.',
         editTitle: 'Edit lead',

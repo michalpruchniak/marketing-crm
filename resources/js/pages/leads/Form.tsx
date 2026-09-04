@@ -10,15 +10,7 @@ import { leadLabelText } from './label-text';
 import type { LeadLabelOption, SalesPersonOption } from './types';
 
 type FormErrors = Partial<
-    Record<
-        | 'name'
-        | 'email'
-        | 'phone'
-        | 'notes'
-        | 'label'
-        | 'sales_id',
-        string
-    >
+    Record<'name' | 'email' | 'phone' | 'notes' | 'label' | 'sales_id', string>
 >;
 
 type Props = {
@@ -68,7 +60,9 @@ export default function LeadForm({
             </div>
 
             <div className="grid gap-2">
-                <FieldLabel htmlFor="lead-email">{t('common.email')}</FieldLabel>
+                <FieldLabel htmlFor="lead-email">
+                    {t('common.email')}
+                </FieldLabel>
                 <Input
                     id="lead-email"
                     type="email"
@@ -80,7 +74,9 @@ export default function LeadForm({
             </div>
 
             <div className="grid gap-2">
-                <FieldLabel htmlFor="lead-phone">{t('common.phone')}</FieldLabel>
+                <FieldLabel htmlFor="lead-phone">
+                    {t('common.phone')}
+                </FieldLabel>
                 <Input
                     id="lead-phone"
                     name="phone"
@@ -135,7 +131,9 @@ export default function LeadForm({
             )}
 
             <div className="grid gap-2">
-                <FieldLabel htmlFor="lead-notes">{t('common.notes')}</FieldLabel>
+                <FieldLabel htmlFor="lead-notes">
+                    {t('common.notes')}
+                </FieldLabel>
                 <Textarea
                     id="lead-notes"
                     name="notes"
