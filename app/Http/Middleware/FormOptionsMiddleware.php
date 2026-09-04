@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Enums\LeadLabel;
 use App\Enums\Permission;
 use App\Models\User;
 use App\Services\Contracts\FormOptionsServiceInterface;
@@ -25,7 +26,7 @@ class FormOptionsMiddleware
         $user = $request->user();
 
         if ($request->routeIs(['leads.index', 'leads.create', 'leads.edit'])) {
-            $shares['leadLabels'] = $this->formOptions->leadLabels();
+            $shares['leadLabels'] = LeadLabel::values();
         }
 
         if ($request->routeIs(['leads.create', 'leads.edit']) && $user instanceof User) {

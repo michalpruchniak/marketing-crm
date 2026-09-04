@@ -6,10 +6,6 @@ use App\Models\User;
 
 interface FormOptionsServiceInterface
 {
-    /**
-     * @return list<array{value: string}>
-     */
-    public function leadLabels(): array;
 
     /**
      * @return list<array{id: int, name: string}>

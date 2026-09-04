@@ -1,6 +1,4 @@
-export type LeadLabelOption = {
-    value: string;
-};
+export type LeadLabelOption = string;
 
 export type SalesPersonOption = {
     id: number;

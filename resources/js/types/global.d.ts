@@ -39,9 +39,7 @@ declare module '@inertiajs/core' {
                 value: string;
                 label: string;
             }>;
-            leadLabels?: Array<{
-                value: string;
-            }>;
+            leadLabels?: string[];
             salesPersons?: Array<{
                 id: number;
                 name: string;

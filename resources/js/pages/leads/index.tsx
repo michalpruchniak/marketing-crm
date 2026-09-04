@@ -176,12 +176,12 @@ export default function LeadsIndex({
                                                         leadLabels as LeadLabelOption[]
                                                     ).map((option) => (
                                                         <option
-                                                            key={option.value}
-                                                            value={option.value}
+                                                            key={option}
+                                                            value={option}
                                                         >
                                                             {leadLabelText(
                                                                 t,
-                                                                option.value,
+                                                                option,
                                                             )}
                                                         </option>
                                                     ))}

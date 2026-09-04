@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Enums\LeadLabel;
 use App\Enums\Permission;
 use App\Enums\Role;
 use App\Models\User;
@@ -10,17 +9,6 @@ use App\Services\Contracts\FormOptionsServiceInterface;
 
 class FormOptionsService implements FormOptionsServiceInterface
 {
-    /**
-     * @return list<array{value: string}>
-     */
-    public function leadLabels(): array
-    {
-        return array_map(
-            static fn (LeadLabel $label): array => ['value' => $label->value],
-            LeadLabel::cases(),
-        );
-    }
-
     /**
      * @return list<array{id: int, name: string}>
      */
