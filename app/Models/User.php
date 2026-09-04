@@ -67,16 +67,17 @@ class User extends Authenticatable
      */
     public static function coordinators(): array
     {
-        return self::query()
-            ->assignableCoordinators()
-            ->orderBy('name')
-            ->get(['id', 'name'])
-            ->map(static fn (User $coordinator): array => [
-                'id' => $coordinator->id,
-                'name' => $coordinator->name,
-            ])
-            ->values()
-            ->all();
+        return array_values(
+            self::query()
+                ->assignableCoordinators()
+                ->orderBy('name')
+                ->get(['id', 'name'])
+                ->map(static fn (User $coordinator): array => [
+                    'id' => $coordinator->id,
+                    'name' => $coordinator->name,
+                ])
+                ->all(),
+        );
     }
 
     /**
@@ -84,16 +85,17 @@ class User extends Authenticatable
      */
     public static function salesPersons(): array
     {
-        return self::query()
-            ->role(Role::Sales->value)
-            ->orderBy('name')
-            ->get(['id', 'name'])
-            ->map(static fn (User $salesPerson): array => [
-                'id' => $salesPerson->id,
-                'name' => $salesPerson->name,
-            ])
-            ->values()
-            ->all();
+        return array_values(
+            self::query()
+                ->role(Role::Sales->value)
+                ->orderBy('name')
+                ->get(['id', 'name'])
+                ->map(static fn (User $salesPerson): array => [
+                    'id' => $salesPerson->id,
+                    'name' => $salesPerson->name,
+                ])
+                ->all(),
+        );
     }
 
     public function isBanned(): bool
