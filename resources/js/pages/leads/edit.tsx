@@ -30,12 +30,7 @@ export default function LeadsEdit({ lead }: { lead: Lead }) {
                             errors={errors}
                             leadLabels={leadLabels}
                             salesPersons={salesPersons}
-                            defaultName={lead.name}
-                            defaultEmail={lead.email ?? ''}
-                            defaultPhone={lead.phone ?? ''}
-                            defaultNotes={lead.notes ?? ''}
-                            defaultLabel={lead.label}
-                            defaultSalesId={lead.sales_id}
+                            defaults={lead}
                             showSalesPerson={can.canLeadsUpdateAny}
                         />
                     )}

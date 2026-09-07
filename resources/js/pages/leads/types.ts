@@ -20,4 +20,13 @@ export type Lead = {
     } | null;
 };
 
+export type DefaultsLeads = {
+    name?: string | null;
+    email?: string | null;
+    phone?: string | null;
+    notes?: string | null;
+    label?: string | null;
+    sales_id?: number | null;
+}
+
 export type LeadListItem = Lead;

@@ -72,10 +72,6 @@ class User extends Authenticatable
                 ->assignableCoordinators()
                 ->orderBy('name')
                 ->get(['id', 'name'])
-                ->map(static fn (User $coordinator): array => [
-                    'id' => $coordinator->id,
-                    'name' => $coordinator->name,
-                ])
                 ->all(),
         );
     }
@@ -90,10 +86,6 @@ class User extends Authenticatable
                 ->role(Role::Sales->value)
                 ->orderBy('name')
                 ->get(['id', 'name'])
-                ->map(static fn (User $salesPerson): array => [
-                    'id' => $salesPerson->id,
-                    'name' => $salesPerson->name,
-                ])
                 ->all(),
         );
     }

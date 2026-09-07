@@ -1,4 +1,4 @@
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import { useTranslation } from 'react-i18next';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import FieldLabel from '@/pages/clients/components/FieldLabel';
 import { index as leadsIndex } from '@/routes/leads';
 import { leadLabelText } from './label-text';
-import type { LeadLabelOption, SalesPersonOption } from './types';
+import type { DefaultsLeads, LeadLabelOption, SalesPersonOption } from './types';
 
 type FormErrors = Partial<
     Record<'name' | 'email' | 'phone' | 'notes' | 'label' | 'sales_id', string>
@@ -18,29 +18,20 @@ type Props = {
     errors: FormErrors;
     leadLabels: LeadLabelOption[];
     salesPersons?: SalesPersonOption[];
-    defaultName?: string;
-    defaultEmail?: string;
-    defaultPhone?: string;
-    defaultNotes?: string;
-    defaultLabel?: string;
-    defaultSalesId?: number | null;
+    defaults?: DefaultsLeads;
     showSalesPerson?: boolean;
 };
 
 export default function LeadForm({
     processing,
     errors,
-    leadLabels,
+    // leadLabels,
+    defaults = {},
     salesPersons = [],
-    defaultName = '',
-    defaultEmail = '',
-    defaultPhone = '',
-    defaultNotes = '',
-    defaultLabel = 'new',
-    defaultSalesId = null,
     showSalesPerson = false,
 }: Props) {
     const { t } = useTranslation();
+    const { leadLabels = [] } = usePage().props;
 
     return (
         <>
@@ -53,7 +44,7 @@ export default function LeadForm({
                     name="name"
                     required
                     autoFocus
-                    defaultValue={defaultName}
+                    defaultValue={defaults.name ?? ''}
                     placeholder={t('leads.namePlaceholder')}
                 />
                 <InputError message={errors.name} />
@@ -67,7 +58,7 @@ export default function LeadForm({
                     id="lead-email"
                     type="email"
                     name="email"
-                    defaultValue={defaultEmail}
+                    defaultValue={defaults.email ?? ''}
                     placeholder={t('leads.emailPlaceholder')}
                 />
                 <InputError message={errors.email} />
@@ -80,7 +71,7 @@ export default function LeadForm({
                 <Input
                     id="lead-phone"
                     name="phone"
-                    defaultValue={defaultPhone}
+                    defaultValue={defaults.phone ?? ''}
                     placeholder={t('leads.phonePlaceholder')}
                 />
                 <InputError message={errors.phone} />
@@ -94,7 +85,7 @@ export default function LeadForm({
                     id="lead-label"
                     name="label"
                     required
-                    defaultValue={defaultLabel}
+                    defaultValue={defaults.label ?? 'new'}
                     className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
                 >
                     {leadLabels.map((option) => (
@@ -114,7 +105,7 @@ export default function LeadForm({
                     <select
                         id="lead-sales_id"
                         name="sales_id"
-                        defaultValue={defaultSalesId ?? ''}
+                        defaultValue={defaults.sales_id ?? ''}
                         className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
                     >
                         <option value="">
@@ -137,7 +128,7 @@ export default function LeadForm({
                 <Textarea
                     id="lead-notes"
                     name="notes"
-                    defaultValue={defaultNotes}
+                    defaultValue={defaults.notes ?? ''}
                     placeholder={t('leads.notesPlaceholder')}
                 />
                 <InputError message={errors.notes} />
