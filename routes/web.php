@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ClientCredentialController;
+use App\Http\Controllers\LeadController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -29,6 +30,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('users', UserController::class)->except(['show']);
     Route::patch('users/{user}/ban', [UserController::class, 'ban'])->name('users.ban');
     Route::delete('users/{user}/ban', [UserController::class, 'unban'])->name('users.unban');
+
+    Route::resource('leads', LeadController::class)->except(['show', 'destroy']);
+    Route::patch('leads/{lead}/label', [LeadController::class, 'updateLabel'])->name('leads.label.update');
 });
 
 require __DIR__.'/settings.php';

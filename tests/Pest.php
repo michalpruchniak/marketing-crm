@@ -49,6 +49,7 @@ use App\Http\DTO\SecretPayloadDTO;
 use App\Models\Client;
 use App\Models\Credential;
 use App\Models\CredentialPayload;
+use App\Models\Lead;
 use App\Models\User;
 use App\Supports\SecretsStorage\Enums\SecretsDriver;
 use Illuminate\Support\Str;
@@ -66,6 +67,28 @@ function makeClient(?User $coordinator = null): Client
     $coordinator ??= User::factory()->create();
 
     return Client::factory()->forCoordinator($coordinator)->create();
+}
+
+function makeLead(?User $salesPerson = null): Lead
+{
+    $salesPerson ??= makeUserWithRole(Role::Sales);
+
+    return Lead::factory()->forSalesPerson($salesPerson)->create();
+}
+
+/**
+ * @param  array<string, mixed>  $overrides
+ * @return array<string, mixed>
+ */
+function validLeadPayload(array $overrides = []): array
+{
+    return array_merge([
+        'name' => 'New Lead',
+        'email' => 'lead@example.com',
+        'phone' => null,
+        'notes' => null,
+        'label' => 'new',
+    ], $overrides);
 }
 
 /**

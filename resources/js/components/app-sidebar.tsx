@@ -1,5 +1,6 @@
 import { Link, usePage } from '@inertiajs/react';
-import { LayoutGrid, UserCog, Users } from 'lucide-react';
+import { LayoutGrid, Target, UserCog, Users } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import AppLogo from '@/components/app-logo';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
@@ -14,10 +15,12 @@ import {
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
 import { index as clientsIndex } from '@/routes/clients';
+import { index as leadsIndex } from '@/routes/leads';
 import { index as usersIndex } from '@/routes/users';
 import type { NavItem } from '@/types';
 
 export function AppSidebar() {
+    const { t } = useTranslation();
     const { can } = usePage().props;
 
     const mainNavItems: NavItem[] = [
@@ -32,6 +35,14 @@ export function AppSidebar() {
             icon: Users,
         },
     ];
+
+    if (can.canLeadsView) {
+        mainNavItems.push({
+            title: t('leads.pageTitle'),
+            href: leadsIndex(),
+            icon: Target,
+        });
+    }
 
     if (can.canUsersView) {
         mainNavItems.push({

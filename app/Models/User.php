@@ -46,12 +46,48 @@ class User extends Authenticatable
     }
 
     /**
+     * @return HasMany<Lead, $this>
+     */
+    public function leads(): HasMany
+    {
+        return $this->hasMany(Lead::class, 'sales_id');
+    }
+
+    /**
      * @param  Builder<User>  $query
      * @return Builder<User>
      */
     public function scopeAssignableCoordinators(Builder $query): Builder
     {
         return $query->role(Role::assignableAsCoordinatorValues());
+    }
+
+    /**
+     * @return list<array{id: int, name: string}>
+     */
+    public static function coordinators(): array
+    {
+        return array_values(
+            self::query()
+                ->assignableCoordinators()
+                ->orderBy('name')
+                ->get(['id', 'name'])
+                ->all(),
+        );
+    }
+
+    /**
+     * @return list<array{id: int, name: string}>
+     */
+    public static function salesPersons(): array
+    {
+        return array_values(
+            self::query()
+                ->role(Role::Sales->value)
+                ->orderBy('name')
+                ->get(['id', 'name'])
+                ->all(),
+        );
     }
 
     public function isBanned(): bool

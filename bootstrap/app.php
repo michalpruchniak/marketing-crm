@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\EnsureUserIsNotBanned;
+use App\Http\Middleware\FormOptionsMiddleware;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
 use Illuminate\Foundation\Application;
@@ -22,6 +23,7 @@ return Application::configure(basePath: dirname(__DIR__))
             HandleAppearance::class,
             EnsureUserIsNotBanned::class,
             HandleInertiaRequests::class,
+            FormOptionsMiddleware::class,
             AddLinkHeadersForPreloadedAssets::class,
         ]);
     })
