@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Enums\LeadLabel;
 use App\Enums\Permission;
+use App\Events\LeadCreated;
+use App\Events\LeadUpdated;
 use App\Http\DTO\StoreLeadDTO;
 use App\Http\DTO\UpdateLeadDTO;
 use App\Models\Lead;
@@ -65,7 +67,11 @@ class LeadService implements LeadServiceInterface
             throw new LogicException('Expected Lead model instance.');
         }
 
-        return $lead->load(['salesPerson:id,name']);
+        $lead->load(['salesPerson:id,name']);
+
+        event(new LeadCreated($lead));
+
+        return $lead;
     }
 
     public function update(Lead $lead, UpdateLeadDTO $dto): Lead
@@ -84,7 +90,11 @@ class LeadService implements LeadServiceInterface
             throw new LogicException('Expected Lead model instance.');
         }
 
-        return $lead->load(['salesPerson:id,name']);
+        $lead->load(['salesPerson:id,name']);
+
+        event(new LeadUpdated($lead));
+
+        return $lead;
     }
 
     public function updateLabel(Lead $lead, LeadLabel $label): Lead
@@ -97,6 +107,10 @@ class LeadService implements LeadServiceInterface
             throw new LogicException('Expected Lead model instance.');
         }
 
-        return $lead->load(['salesPerson:id,name']);
+        $lead->load(['salesPerson:id,name']);
+
+        event(new LeadUpdated($lead));
+
+        return $lead;
     }
 }

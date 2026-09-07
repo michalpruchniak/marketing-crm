@@ -1,5 +1,7 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
+import { useEcho } from '@laravel/echo-react';
 import { Pencil, Plus, Target } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import LeadController from '@/actions/App/Http/Controllers/LeadController';
 import Heading from '@/components/heading';
@@ -21,8 +23,12 @@ type Filters = {
     mine: boolean;
 };
 
+type LeadRealtimePayload = {
+    lead: LeadListItem;
+};
+
 export default function LeadsIndex({
-    leads,
+    leads: initialLeads,
     filters,
 }: {
     leads: LeadListItem[];
@@ -31,6 +37,63 @@ export default function LeadsIndex({
     const { t } = useTranslation();
     const { auth, can, leadLabels = [] } = usePage().props;
     const currentUserId = auth.user?.id ?? null;
+    const [leads, setLeads] = useState(initialLeads);
+
+    useEffect(() => {
+        setLeads(initialLeads);
+    }, [initialLeads]);
+
+    function shouldShowLead(lead: LeadListItem): boolean {
+        if (!filters.mine) {
+            return true;
+        }
+
+        return lead.sales_id === currentUserId;
+    }
+
+    useEcho<LeadRealtimePayload>(
+        'leads',
+        '.lead.created',
+        ({ lead }) => {
+            if (!shouldShowLead(lead)) {
+                return;
+            }
+
+            setLeads((current) => {
+                if (current.some((item) => item.id === lead.id)) {
+                    return current;
+                }
+
+                return [lead, ...current];
+            });
+        },
+        [filters.mine, currentUserId],
+    );
+
+    useEcho<LeadRealtimePayload>(
+        'leads',
+        '.lead.updated',
+        ({ lead }) => {
+            setLeads((current) => {
+                const exists = current.some((item) => item.id === lead.id);
+
+                if (!shouldShowLead(lead)) {
+                    return exists
+                        ? current.filter((item) => item.id !== lead.id)
+                        : current;
+                }
+
+                if (!exists) {
+                    return [lead, ...current];
+                }
+
+                return current.map((item) =>
+                    item.id === lead.id ? lead : item,
+                );
+            });
+        },
+        [filters.mine, currentUserId],
+    );
 
     function canUpdateLead(lead: LeadListItem): boolean {
         if (can.canLeadsUpdateAny) {
