@@ -55,17 +55,14 @@ class LeadController extends Controller
 
     public function store(StoreLeadRequest $request): RedirectResponse
     {
-        /** @var User $user */
-        $user = $request->user();
-
-        $this->leadService->create($request->getDTO(), $user);
+        $this->leadService->create($request->getDTO());
 
         Inertia::flash('toast', [
             'type' => 'success',
             'message' => __('Lead created.'),
         ]);
 
-        return to_route('leads.index', $this->indexQueryForUser($user));
+        return to_route('leads.index', $this->indexQueryForUser($request->user()));
     }
 
     public function edit(Lead $lead): Response

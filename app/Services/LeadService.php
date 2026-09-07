@@ -43,12 +43,13 @@ class LeadService implements LeadServiceInterface
         return $leads;
     }
 
-    public function create(StoreLeadDTO $dto, User $creator): Lead
+    public function create(StoreLeadDTO $dto): Lead
     {
         $salesId = $dto->salesId;
 
-        if (! $creator->can(Permission::LeadsUpdateAny->value)) {
-            $salesId = $creator->id;
+        $user = Auth::user();
+        if (! $user->can(Permission::LeadsUpdateAny->value)) {
+            $salesId = $user->id;
         }
 
         $lead = $this->leadsRepository->create([

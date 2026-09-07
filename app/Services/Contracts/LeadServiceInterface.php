@@ -16,7 +16,7 @@ interface LeadServiceInterface
      */
     public function getAllForUser(User $user, bool $onlyMine = false): Collection;
 
-    public function create(StoreLeadDTO $dto, User $creator): Lead;
+    public function create(StoreLeadDTO $dto): Lead;
 
     public function update(Lead $lead, UpdateLeadDTO $dto): Lead;
 
