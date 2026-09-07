@@ -1,7 +1,10 @@
 <?php
 
 use App\Enums\Role;
+use App\Events\CredentialCreated;
+use App\Events\CredentialDeleted;
 use App\Models\Client;
+use Illuminate\Support\Facades\Event;
 
 describe('client permissions', function () {
     describe('viewing clients', function () {
@@ -362,6 +365,54 @@ describe('credential permissions', function () {
             ->assertInertia(fn ($page) => $page
                 ->component('clients/show')
                 ->has('credentials', 1));
+    });
+
+    describe('realtime broadcasting', function () {
+        it('dispatches CredentialCreated when a credential is stored', function () {
+            Event::fake([CredentialCreated::class]);
+
+            $admin = makeUserWithRole(Role::Admin);
+            $client = makeClient();
+
+            $this->actingAs($admin)
+                ->post(route('clients.credentials.store', $client), [
+                    'name' => 'Realtime Credential',
+                    'description' => 'Live',
+                    'login' => 'user',
+                    'password' => 'secret',
+                    'additional_information' => null,
+                    'url' => null,
+                ])
+                ->assertRedirect(route('clients.show', $client));
+
+            Event::assertDispatched(CredentialCreated::class, function (CredentialCreated $event) use ($client): bool {
+                return $event->credential->name === 'Realtime Credential'
+                    && $event->broadcastAs() === 'credential.created'
+                    && collect($event->broadcastOn())->contains(
+                        fn ($channel) => (string) $channel === 'private-clients.'.$client->id.'.credentials'
+                    )
+                    && $event->broadcastWith()['credential']['id'] === $event->credential->id;
+            });
+        });
+
+        it('dispatches CredentialDeleted when a credential is deleted', function () {
+            Event::fake([CredentialDeleted::class]);
+
+            $admin = makeUserWithRole(Role::Admin);
+            $client = makeClient();
+            $credential = makeCredentialWithPayload($client, $admin);
+
+            $this->actingAs($admin)
+                ->delete(route('clients.credentials.destroy', [$client, $credential]))
+                ->assertRedirect(route('clients.show', $client));
+
+            Event::assertDispatched(CredentialDeleted::class, function (CredentialDeleted $event) use ($client, $credential): bool {
+                return $event->clientId === $client->id
+                    && $event->credentialId === $credential->id
+                    && $event->broadcastAs() === 'credential.deleted'
+                    && $event->broadcastWith()['credential']['id'] === $credential->id;
+            });
+        });
     });
 });
 

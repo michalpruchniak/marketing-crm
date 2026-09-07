@@ -11,3 +11,7 @@ Broadcast::channel('App.Models.User.{id}', function (User $user, int $id): bool 
 Broadcast::channel('leads', function (User $user): bool {
     return $user->can(Permission::LeadsView->value);
 });
+
+Broadcast::channel('clients.{clientId}.credentials', function (User $user): bool {
+    return $user->can(Permission::CredentialsView->value);
+});

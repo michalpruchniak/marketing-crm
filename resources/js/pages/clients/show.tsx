@@ -1,6 +1,7 @@
 import { Head, router, usePage } from '@inertiajs/react';
+import { useEcho } from '@laravel/echo-react';
 import { Pencil, Trash2 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import ClientController from '@/actions/App/Http/Controllers/ClientController';
 import ClientCredentialController from '@/actions/App/Http/Controllers/ClientCredentialController';
@@ -15,15 +16,26 @@ import EditClientModal from './components/EditClientModal';
 import RevealCredentialModal from './components/RevealCredentialModal';
 import type { Client, CredentialMeta, RevealedCredential } from './types';
 
+type CredentialCreatedPayload = {
+    credential: CredentialMeta;
+};
+
+type CredentialDeletedPayload = {
+    credential: {
+        id: string;
+    };
+};
+
 export default function ClientsShow({
     client,
-    credentials,
+    credentials: initialCredentials,
 }: {
     client: Client;
     credentials: CredentialMeta[];
 }) {
     const { t } = useTranslation();
     const { can } = usePage().props;
+    const [credentials, setCredentials] = useState(initialCredentials);
     const [createOpen, setCreateOpen] = useState(false);
     const [editOpen, setEditOpen] = useState(false);
     const [revealed, setRevealed] = useState<RevealedCredential | null>(null);
@@ -33,6 +45,36 @@ export default function ClientsShow({
     const [deleteClientOpen, setDeleteClientOpen] = useState(false);
     const [deleteCredential, setDeleteCredential] =
         useState<CredentialMeta | null>(null);
+
+    useEffect(() => {
+        setCredentials(initialCredentials);
+    }, [initialCredentials]);
+
+    useEcho<CredentialCreatedPayload>(
+        `clients.${client.id}.credentials`,
+        '.credential.created',
+        ({ credential }) => {
+            setCredentials((current) => {
+                if (current.some((item) => item.id === credential.id)) {
+                    return current;
+                }
+
+                return [credential, ...current];
+            });
+        },
+        [client.id],
+    );
+
+    useEcho<CredentialDeletedPayload>(
+        `clients.${client.id}.credentials`,
+        '.credential.deleted',
+        ({ credential }) => {
+            setCredentials((current) =>
+                current.filter((item) => item.id !== credential.id),
+            );
+        },
+        [client.id],
+    );
 
     async function handleReveal(credentialId: string) {
         setRevealLoading(true);
