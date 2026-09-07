@@ -1,6 +1,9 @@
 import { Head, Link, usePage } from '@inertiajs/react';
 import { Plus, Users } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { useEffect, useState } from 'react';
+import { useEcho } from '@laravel/echo-react';
+
 import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
 import {
@@ -11,17 +14,48 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
+
 import {
     index as clientsIndex,
     create as clientsCreate,
     show as clientsShow,
 } from '@/routes/clients';
+
 import type { Client } from './types';
 
-export default function ClientsIndex({ clients }: { clients: Client[] }) {
+type ClientCreatedPayload = {
+    client: Client;
+};
+
+export default function ClientsIndex({
+    clients: initialClients,
+}: {
+    clients: Client[];
+}) {
     const { t } = useTranslation();
     const { auth, can } = usePage().props;
+
     const currentUserId = auth.user?.id ?? null;
+
+    const [clients, setClients] = useState(initialClients);
+
+    useEffect(() => {
+        setClients(initialClients);
+    }, [initialClients]);
+
+    useEcho<ClientCreatedPayload>(
+        'clients',
+        '.client.created',
+        ({ client }) => {
+            setClients((current) => {
+                if (current.some((item) => item.id === client.id)) {
+                    return current;
+                }
+
+                return [client, ...current];
+            });
+        },
+    );
 
     return (
         <>
@@ -51,10 +85,12 @@ export default function ClientsIndex({ clients }: { clients: Client[] }) {
                                 <Users className="size-5" />
                                 {t('clients.noClientsTitle')}
                             </CardTitle>
+
                             <CardDescription>
                                 {t('clients.noClientsDescription')}
                             </CardDescription>
                         </CardHeader>
+
                         {can.canClientsCreate && (
                             <CardContent>
                                 <Button asChild>
@@ -73,23 +109,29 @@ export default function ClientsIndex({ clients }: { clients: Client[] }) {
                                     <th className="px-4 py-3 font-medium">
                                         {t('common.name')}
                                     </th>
+
                                     <th className="px-4 py-3 font-medium">
                                         {t('common.email')}
                                     </th>
+
                                     <th className="px-4 py-3 font-medium">
                                         {t('common.phone')}
                                     </th>
+
                                     <th className="px-4 py-3 font-medium">
                                         {t('clients.coordinator')}
                                     </th>
+
                                     <th className="px-4 py-3 font-medium" />
                                 </tr>
                             </thead>
+
                             <tbody>
                                 {clients.map((client) => {
                                     const isOwn =
                                         currentUserId !== null &&
-                                        client.coordinator_id === currentUserId;
+                                        client.coordinator_id ===
+                                            currentUserId;
 
                                     return (
                                         <tr
@@ -103,16 +145,19 @@ export default function ClientsIndex({ clients }: { clients: Client[] }) {
                                             <td className="px-4 py-3 font-medium">
                                                 {client.name}
                                             </td>
+
                                             <td className="px-4 py-3 text-muted-foreground">
                                                 {client.email ?? '—'}
                                             </td>
+
                                             <td className="px-4 py-3 text-muted-foreground">
                                                 {client.phone ?? '—'}
                                             </td>
+
                                             <td className="px-4 py-3 text-muted-foreground">
-                                                {client.coordinator?.name ??
-                                                    '—'}
+                                                {client.coordinator?.name ?? '—'}
                                             </td>
+
                                             <td className="px-4 py-3 text-right">
                                                 <Button
                                                     variant="outline"

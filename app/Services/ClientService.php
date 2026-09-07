@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Events\ClientCreated;
 use App\Http\DTO\StoreClientDTO;
 use App\Http\DTO\UpdateClientDTO;
 use App\Models\Client;
@@ -70,6 +71,10 @@ class ClientService implements ClientServiceInterface
         if (! $client instanceof Client) {
             throw new LogicException('Expected Client model instance.');
         }
+
+        $client->load(['coordinator:id,name']);
+
+        event(new ClientCreated($client));
 
         return $client;
     }

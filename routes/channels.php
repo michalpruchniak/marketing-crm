@@ -12,6 +12,10 @@ Broadcast::channel('leads', function (User $user): bool {
     return $user->can(Permission::LeadsView->value);
 });
 
+Broadcast::channel('clients', function (User $user): bool {
+    return $user->can(Permission::ClientsView->value);
+});
+
 Broadcast::channel('clients.{clientId}.credentials', function (User $user): bool {
     return $user->can(Permission::CredentialsView->value);
 });
