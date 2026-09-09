@@ -22,9 +22,8 @@ import {
 } from '@/routes/clients';
 
 import type { Client } from './types';
-import { ClientListItem } from '../leads/types';
 
-type ClientCreatedPayload = {
+type ClientRealtimePayload = {
     client: Client;
 };
 
@@ -44,7 +43,7 @@ export default function ClientsIndex({
         setClients(initialClients);
     }, [initialClients]);
 
-    useEcho<ClientCreatedPayload>(
+    useEcho<ClientRealtimePayload>(
         'clients',
         '.client.created',
         ({ client }) => {
@@ -58,9 +57,9 @@ export default function ClientsIndex({
         },
     );
 
-    useEcho<ClientCreatedPayload>(
+    useEcho<ClientRealtimePayload>(
         'clients',
-        '.client.updated',
+        '.client.updated.single',
         ({ client }) => {
             setClients((current) => {
                 const exists = current.some((item) => item.id === client.id);
@@ -74,7 +73,6 @@ export default function ClientsIndex({
                 );
             });
         },
-        [currentUserId],
     );
 
     return (

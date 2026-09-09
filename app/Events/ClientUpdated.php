@@ -3,11 +3,8 @@
 namespace App\Events;
 
 use App\Models\Client;
-use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
@@ -16,18 +13,10 @@ class ClientUpdated implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    /**
-     * Create a new event instance.
-     */
-    public function __construct(public Client $client)
-    {
-        //
-    }
+    public function __construct(public Client $client) {}
 
     /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return array<int, Channel>
+     * @return array<int, PrivateChannel>
      */
     public function broadcastOn(): array
     {
@@ -38,9 +27,12 @@ class ClientUpdated implements ShouldBroadcastNow
 
     public function broadcastAs(): string
     {
-        return 'client.updated';
+        return 'client.updated.single';
     }
 
+    /**
+     * @return array{client: array{id: string, name: string, email: string|null, phone: string|null, notes: string|null, coordinator_id: int|null, coordinator: array{id: int, name: string}|null}}
+     */
     public function broadcastWith(): array
     {
         $coordinator = $this->client->coordinator;
@@ -59,7 +51,5 @@ class ClientUpdated implements ShouldBroadcastNow
                 ],
             ],
         ];
-
-
     }
 }

@@ -110,6 +110,8 @@ class ClientService implements ClientServiceInterface
             throw new LogicException('Expected Client model instance.');
         }
 
+        $client->load(['coordinator:id,name']);
+
         event(new ClientUpdated($client));
 
         return $client;

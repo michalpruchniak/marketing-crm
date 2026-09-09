@@ -26,8 +26,12 @@ type CredentialDeletedPayload = {
     };
 };
 
+type ClientUpdatedPayload = {
+    client: Client;
+};
+
 export default function ClientsShow({
-    client,
+    client: initialClient,
     credentials: initialCredentials,
 }: {
     client: Client;
@@ -35,6 +39,7 @@ export default function ClientsShow({
 }) {
     const { t } = useTranslation();
     const { can } = usePage().props;
+    const [client, setClient] = useState(initialClient);
     const [credentials, setCredentials] = useState(initialCredentials);
     const [createOpen, setCreateOpen] = useState(false);
     const [editOpen, setEditOpen] = useState(false);
@@ -44,12 +49,28 @@ export default function ClientsShow({
     const [revealError, setRevealError] = useState<string | null>(null);
     const [deleteClientOpen, setDeleteClientOpen] = useState(false);
     const [deleteCredential, setDeleteCredential] =
+        useState<CredentialMeta | null>(null);
 
-    useState<CredentialMeta | null>(null);
+    useEffect(() => {
+        setClient(initialClient);
+    }, [initialClient]);
 
     useEffect(() => {
         setCredentials(initialCredentials);
     }, [initialCredentials]);
+
+    useEcho<ClientUpdatedPayload>(
+        'clients',
+        '.client.updated.single',
+        ({ client: updatedClient }) => {
+            if (updatedClient.id !== client.id) {
+                return;
+            }
+
+            setClient(updatedClient);
+        },
+        [client.id],
+    );
 
     useEcho<CredentialCreatedPayload>(
         `clients.${client.id}.credentials`,
@@ -96,7 +117,8 @@ export default function ClientsShow({
             });
 
             const data = (await response.json()) as
-                RevealedCredential | { message?: string };
+                | RevealedCredential
+                | { message?: string };
 
             if (!response.ok) {
                 setRevealError(
