@@ -61,7 +61,7 @@ export default function ClientsShow({
 
     useEcho<ClientUpdatedPayload>(
         'clients',
-        '.client.updated.single',
+        '.client.updated',
         ({ client: updatedClient }) => {
             if (updatedClient.id !== client.id) {
                 return;

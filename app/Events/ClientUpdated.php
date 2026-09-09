@@ -27,7 +27,7 @@ class ClientUpdated implements ShouldBroadcastNow
 
     public function broadcastAs(): string
     {
-        return 'client.updated.single';
+        return 'client.updated';
     }
 
     /**

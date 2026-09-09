@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Events\ClientCreated;
+use App\Events\ClientDeleted;
 use App\Events\ClientUpdated;
 use App\Http\DTO\StoreClientDTO;
 use App\Http\DTO\UpdateClientDTO;
@@ -123,7 +124,11 @@ class ClientService implements ClientServiceInterface
      */
     public function delete(Client $client): void
     {
+        $clientId = $client->id;
+
         $this->credentialsService->deleteAllForClient($client);
         $this->clientsRepository->delete($client);
+
+        event(new ClientDeleted($clientId));
     }
 }

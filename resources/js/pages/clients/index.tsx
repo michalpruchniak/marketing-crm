@@ -27,6 +27,12 @@ type ClientRealtimePayload = {
     client: Client;
 };
 
+type ClientDeletedPayload = {
+    client: {
+        id: string;
+    };
+};
+
 export default function ClientsIndex({
     clients: initialClients,
 }: {
@@ -59,7 +65,7 @@ export default function ClientsIndex({
 
     useEcho<ClientRealtimePayload>(
         'clients',
-        '.client.updated.single',
+        '.client.updated',
         ({ client }) => {
             setClients((current) => {
                 const exists = current.some((item) => item.id === client.id);
@@ -72,6 +78,16 @@ export default function ClientsIndex({
                     item.id === client.id ? client : item,
                 );
             });
+        },
+    );
+
+    useEcho<ClientDeletedPayload>(
+        'clients',
+        '.client.deleted',
+        ({ client }) => {
+            setClients((current) =>
+                current.filter((item) => item.id !== client.id),
+            );
         },
     );
 
