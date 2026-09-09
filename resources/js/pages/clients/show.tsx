@@ -44,7 +44,8 @@ export default function ClientsShow({
     const [revealError, setRevealError] = useState<string | null>(null);
     const [deleteClientOpen, setDeleteClientOpen] = useState(false);
     const [deleteCredential, setDeleteCredential] =
-        useState<CredentialMeta | null>(null);
+
+    useState<CredentialMeta | null>(null);
 
     useEffect(() => {
         setCredentials(initialCredentials);
