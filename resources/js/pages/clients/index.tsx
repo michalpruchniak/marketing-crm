@@ -1,9 +1,6 @@
 import { Head, Link, usePage } from '@inertiajs/react';
 import { Plus, Users } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { useEffect, useState } from 'react';
-import { useEcho } from '@laravel/echo-react';
-
 import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
 import {
@@ -13,25 +10,14 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
+import { useRealtime } from '@/hooks/use-realtime';
 import { cn } from '@/lib/utils';
-
 import {
-    index as clientsIndex,
     create as clientsCreate,
+    index as clientsIndex,
     show as clientsShow,
 } from '@/routes/clients';
-
 import type { Client } from './types';
-
-type ClientRealtimePayload = {
-    client: Client;
-};
-
-type ClientDeletedPayload = {
-    client: {
-        id: string;
-    };
-};
 
 export default function ClientsIndex({
     clients: initialClients,
@@ -40,56 +26,24 @@ export default function ClientsIndex({
 }) {
     const { t } = useTranslation();
     const { auth, can } = usePage().props;
-
     const currentUserId = auth.user?.id ?? null;
-
-    const [clients, setClients] = useState(initialClients);
-
-    useEffect(() => {
-        setClients(initialClients);
-    }, [initialClients]);
-
-    useEcho<ClientRealtimePayload>(
-        'clients',
-        '.client.created',
-        ({ client }) => {
-            setClients((current) => {
-                if (current.some((item) => item.id === client.id)) {
-                    return current;
-                }
-
-                return [client, ...current];
-            });
+    const clients = useRealtime(initialClients, {
+        created: {
+            channel: 'clients',
+            event: '.client.created',
+            resourceKey: 'client',
         },
-    );
-
-    useEcho<ClientRealtimePayload>(
-        'clients',
-        '.client.updated',
-        ({ client }) => {
-            setClients((current) => {
-                const exists = current.some((item) => item.id === client.id);
-
-                if (!exists) {
-                    return [client, ...current];
-                }
-
-                return current.map((item) =>
-                    item.id === client.id ? client : item,
-                );
-            });
+        updated: {
+            channel: 'clients',
+            event: '.client.updated',
+            resourceKey: 'client',
         },
-    );
-
-    useEcho<ClientDeletedPayload>(
-        'clients',
-        '.client.deleted',
-        ({ client }) => {
-            setClients((current) =>
-                current.filter((item) => item.id !== client.id),
-            );
+        deleted: {
+            channel: 'clients',
+            event: '.client.deleted',
+            resourceKey: 'client',
         },
-    );
+    });
 
     return (
         <>
@@ -164,8 +118,7 @@ export default function ClientsIndex({
                                 {clients.map((client) => {
                                     const isOwn =
                                         currentUserId !== null &&
-                                        client.coordinator_id ===
-                                            currentUserId;
+                                        client.coordinator_id === currentUserId;
 
                                     return (
                                         <tr
@@ -189,7 +142,8 @@ export default function ClientsIndex({
                                             </td>
 
                                             <td className="px-4 py-3 text-muted-foreground">
-                                                {client.coordinator?.name ?? '—'}
+                                                {client.coordinator?.name ??
+                                                    '—'}
                                             </td>
 
                                             <td className="px-4 py-3 text-right">

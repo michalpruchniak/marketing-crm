@@ -1,13 +1,13 @@
 import { Head, router, usePage } from '@inertiajs/react';
-import { useEcho } from '@laravel/echo-react';
 import { Pencil, Trash2 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import ClientController from '@/actions/App/Http/Controllers/ClientController';
 import ClientCredentialController from '@/actions/App/Http/Controllers/ClientCredentialController';
 import DeleteModal from '@/components/delete-modal';
 import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
+import { useRealtime } from '@/hooks/use-realtime';
 import { index as clientsIndex } from '@/routes/clients';
 import ClientDetailsSection from './__partials/ClientDetailsSection';
 import CredentialsSection from './__partials/CredentialsSection';
@@ -15,20 +15,6 @@ import AddCredentialModal from './components/AddCredentialModal';
 import EditClientModal from './components/EditClientModal';
 import RevealCredentialModal from './components/RevealCredentialModal';
 import type { Client, CredentialMeta, RevealedCredential } from './types';
-
-type CredentialCreatedPayload = {
-    credential: CredentialMeta;
-};
-
-type CredentialDeletedPayload = {
-    credential: {
-        id: string;
-    };
-};
-
-type ClientUpdatedPayload = {
-    client: Client;
-};
 
 export default function ClientsShow({
     client: initialClient,
@@ -39,8 +25,26 @@ export default function ClientsShow({
 }) {
     const { t } = useTranslation();
     const { can } = usePage().props;
-    const [client, setClient] = useState(initialClient);
-    const [credentials, setCredentials] = useState(initialCredentials);
+    const client = useRealtime(initialClient, {
+        updated: {
+            channel: 'clients',
+            event: '.client.updated',
+            resourceKey: 'client',
+        },
+    });
+    const credentials = useRealtime(initialCredentials, {
+        created: {
+            channel: `clients.${client.id}.credentials`,
+            event: '.credential.created',
+            resourceKey: 'credential',
+        },
+        deleted: {
+            channel: `clients.${client.id}.credentials`,
+            event: '.credential.deleted',
+            resourceKey: 'credential',
+        },
+        dependencies: [client.id],
+    });
     const [createOpen, setCreateOpen] = useState(false);
     const [editOpen, setEditOpen] = useState(false);
     const [revealed, setRevealed] = useState<RevealedCredential | null>(null);
@@ -50,53 +54,6 @@ export default function ClientsShow({
     const [deleteClientOpen, setDeleteClientOpen] = useState(false);
     const [deleteCredential, setDeleteCredential] =
         useState<CredentialMeta | null>(null);
-
-    useEffect(() => {
-        setClient(initialClient);
-    }, [initialClient]);
-
-    useEffect(() => {
-        setCredentials(initialCredentials);
-    }, [initialCredentials]);
-
-    useEcho<ClientUpdatedPayload>(
-        'clients',
-        '.client.updated',
-        ({ client: updatedClient }) => {
-            if (updatedClient.id !== client.id) {
-                return;
-            }
-
-            setClient(updatedClient);
-        },
-        [client.id],
-    );
-
-    useEcho<CredentialCreatedPayload>(
-        `clients.${client.id}.credentials`,
-        '.credential.created',
-        ({ credential }) => {
-            setCredentials((current) => {
-                if (current.some((item) => item.id === credential.id)) {
-                    return current;
-                }
-
-                return [credential, ...current];
-            });
-        },
-        [client.id],
-    );
-
-    useEcho<CredentialDeletedPayload>(
-        `clients.${client.id}.credentials`,
-        '.credential.deleted',
-        ({ credential }) => {
-            setCredentials((current) =>
-                current.filter((item) => item.id !== credential.id),
-            );
-        },
-        [client.id],
-    );
 
     async function handleReveal(credentialId: string) {
         setRevealLoading(true);
