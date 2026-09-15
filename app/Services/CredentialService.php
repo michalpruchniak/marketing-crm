@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Events\CredentialCreated;
+use App\Events\CredentialDeleted;
 use App\Http\DTO\RevealedCredentialDTO;
 use App\Http\DTO\StoreCredentialDTO;
 use App\Models\Client;
@@ -51,11 +53,15 @@ class CredentialService implements CredentialServiceInterface
         $storedSecret = $this->passwordSecretStorage->store($data->toSecretPayloadDTO());
 
         try {
-            return DB::transaction(fn () => $this->credentialsRepository->create([
+            $credential = DB::transaction(fn () => $this->credentialsRepository->create([
                 ...$data->toArray(),
                 'uuid' => $storedSecret->uuid,
                 'type' => $storedSecret->driver->value,
             ]));
+
+            event(new CredentialCreated($credential));
+
+            return $credential;
         } catch (Throwable $exception) {
             $this->passwordSecretStorage->delete($storedSecret->uuid, $storedSecret->driver);
 
@@ -99,6 +105,11 @@ class CredentialService implements CredentialServiceInterface
             $this->passwordSecretStorage->delete($credential->uuid, $credential->driver());
             $this->credentialsRepository->delete($credential);
         });
+
+        event(new CredentialDeleted(
+            clientId: $client->id,
+            credentialId: $credential->id,
+        ));
     }
 
     /**

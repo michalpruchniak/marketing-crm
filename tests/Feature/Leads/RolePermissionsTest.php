@@ -2,7 +2,10 @@
 
 use App\Enums\LeadLabel;
 use App\Enums\Role;
+use App\Events\LeadCreated;
+use App\Events\LeadUpdated;
 use App\Models\Lead;
+use Illuminate\Support\Facades\Event;
 
 describe('lead permissions', function () {
     describe('viewing leads', function () {
@@ -244,6 +247,89 @@ describe('lead permissions', function () {
                     'label' => LeadLabel::Rejected->value,
                 ])
                 ->assertForbidden();
+        });
+    });
+
+    describe('realtime broadcasting', function () {
+        it('dispatches LeadCreated when a lead is stored', function () {
+            Event::fake([LeadCreated::class]);
+
+            $manager = makeUserWithRole(Role::Manager);
+
+            $this->actingAs($manager)
+                ->post(route('leads.store'), validLeadPayload([
+                    'name' => 'Realtime Lead',
+                    'email' => 'realtime-lead@example.com',
+                ]))
+                ->assertRedirect(route('leads.index'));
+
+            Event::assertDispatched(LeadCreated::class, function (LeadCreated $event): bool {
+                return $event->lead->email === 'realtime-lead@example.com'
+                    && $event->broadcastAs() === 'lead.created'
+                    && collect($event->broadcastOn())->contains(
+                        fn ($channel) => (string) $channel === 'private-leads'
+                    );
+            });
+        });
+
+        it('includes lead payload for realtime clients', function () {
+            $sales = makeUserWithRole(Role::Sales);
+            $lead = makeLead($sales)->load('salesPerson:id,name');
+
+            $payload = (new LeadCreated($lead))->broadcastWith();
+
+            expect($payload['lead'])
+                ->id->toBe($lead->id)
+                ->name->toBe($lead->name)
+                ->email->toBe($lead->email)
+                ->phone->toBe($lead->phone)
+                ->notes->toBe($lead->notes)
+                ->label->toBe($lead->label->value)
+                ->sales_id->toBe($sales->id)
+                ->sales_person->toBe([
+                    'id' => $sales->id,
+                    'name' => $sales->name,
+                ])
+                ->created_at->not->toBeNull();
+        });
+
+        it('dispatches LeadUpdated when a lead is updated', function () {
+            Event::fake([LeadUpdated::class]);
+
+            $manager = makeUserWithRole(Role::Manager);
+            $lead = makeLead();
+
+            $this->actingAs($manager)
+                ->patch(route('leads.update', $lead), validLeadPayload([
+                    'name' => 'Updated Realtime Lead',
+                    'email' => 'updated-realtime@example.com',
+                ]))
+                ->assertRedirect(route('leads.index'));
+
+            Event::assertDispatched(LeadUpdated::class, function (LeadUpdated $event) use ($lead): bool {
+                return $event->lead->id === $lead->id
+                    && $event->lead->name === 'Updated Realtime Lead'
+                    && $event->broadcastAs() === 'lead.updated'
+                    && isset($event->broadcastWith()['lead']['id']);
+            });
+        });
+
+        it('dispatches LeadUpdated when a lead label is updated', function () {
+            Event::fake([LeadUpdated::class]);
+
+            $manager = makeUserWithRole(Role::Manager);
+            $lead = makeLead();
+
+            $this->actingAs($manager)
+                ->patch(route('leads.label.update', $lead), [
+                    'label' => LeadLabel::Acquired->value,
+                ])
+                ->assertRedirect();
+
+            Event::assertDispatched(LeadUpdated::class, function (LeadUpdated $event) use ($lead): bool {
+                return $event->lead->id === $lead->id
+                    && $event->lead->label->value === LeadLabel::Acquired->value;
+            });
         });
     });
 });

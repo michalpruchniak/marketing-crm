@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
+import { useRealtime } from '@/hooks/use-realtime';
 import { create as leadsCreate, index as leadsIndex } from '@/routes/leads';
 import { leadLabelText } from './label-text';
 import type { LeadLabelOption, LeadListItem } from './types';
@@ -22,7 +23,7 @@ type Filters = {
 };
 
 export default function LeadsIndex({
-    leads,
+    leads: initialLeads,
     filters,
 }: {
     leads: LeadListItem[];
@@ -31,6 +32,21 @@ export default function LeadsIndex({
     const { t } = useTranslation();
     const { auth, can, leadLabels = [] } = usePage().props;
     const currentUserId = auth.user?.id ?? null;
+    const leads = useRealtime(initialLeads, {
+        created: {
+            channel: 'leads',
+            event: '.lead.created',
+            resourceKey: 'lead',
+        },
+        updated: {
+            channel: 'leads',
+            event: '.lead.updated',
+            resourceKey: 'lead',
+        },
+        shouldInclude: (lead) =>
+            !filters.mine || lead.sales_id === currentUserId,
+        dependencies: [filters.mine, currentUserId],
+    });
 
     function canUpdateLead(lead: LeadListItem): boolean {
         if (can.canLeadsUpdateAny) {

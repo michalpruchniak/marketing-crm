@@ -7,6 +7,7 @@ import ClientCredentialController from '@/actions/App/Http/Controllers/ClientCre
 import DeleteModal from '@/components/delete-modal';
 import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
+import { useRealtime } from '@/hooks/use-realtime';
 import { index as clientsIndex } from '@/routes/clients';
 import ClientDetailsSection from './__partials/ClientDetailsSection';
 import CredentialsSection from './__partials/CredentialsSection';
@@ -16,14 +17,34 @@ import RevealCredentialModal from './components/RevealCredentialModal';
 import type { Client, CredentialMeta, RevealedCredential } from './types';
 
 export default function ClientsShow({
-    client,
-    credentials,
+    client: initialClient,
+    credentials: initialCredentials,
 }: {
     client: Client;
     credentials: CredentialMeta[];
 }) {
     const { t } = useTranslation();
     const { can } = usePage().props;
+    const client = useRealtime(initialClient, {
+        updated: {
+            channel: 'clients',
+            event: '.client.updated',
+            resourceKey: 'client',
+        },
+    });
+    const credentials = useRealtime(initialCredentials, {
+        created: {
+            channel: `clients.${client.id}.credentials`,
+            event: '.credential.created',
+            resourceKey: 'credential',
+        },
+        deleted: {
+            channel: `clients.${client.id}.credentials`,
+            event: '.credential.deleted',
+            resourceKey: 'credential',
+        },
+        dependencies: [client.id],
+    });
     const [createOpen, setCreateOpen] = useState(false);
     const [editOpen, setEditOpen] = useState(false);
     const [revealed, setRevealed] = useState<RevealedCredential | null>(null);
@@ -53,7 +74,8 @@ export default function ClientsShow({
             });
 
             const data = (await response.json()) as
-                RevealedCredential | { message?: string };
+                | RevealedCredential
+                | { message?: string };
 
             if (!response.ok) {
                 setRevealError(

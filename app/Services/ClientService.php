@@ -2,6 +2,9 @@
 
 namespace App\Services;
 
+use App\Events\ClientCreated;
+use App\Events\ClientDeleted;
+use App\Events\ClientUpdated;
 use App\Http\DTO\StoreClientDTO;
 use App\Http\DTO\UpdateClientDTO;
 use App\Models\Client;
@@ -71,6 +74,10 @@ class ClientService implements ClientServiceInterface
             throw new LogicException('Expected Client model instance.');
         }
 
+        $client->load(['coordinator:id,name']);
+
+        event(new ClientCreated($client));
+
         return $client;
     }
 
@@ -104,6 +111,10 @@ class ClientService implements ClientServiceInterface
             throw new LogicException('Expected Client model instance.');
         }
 
+        $client->load(['coordinator:id,name']);
+
+        event(new ClientUpdated($client));
+
         return $client;
     }
 
@@ -113,7 +124,11 @@ class ClientService implements ClientServiceInterface
      */
     public function delete(Client $client): void
     {
+        $clientId = $client->id;
+
         $this->credentialsService->deleteAllForClient($client);
         $this->clientsRepository->delete($client);
+
+        event(new ClientDeleted($clientId));
     }
 }

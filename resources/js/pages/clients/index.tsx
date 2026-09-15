@@ -10,18 +10,40 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
+import { useRealtime } from '@/hooks/use-realtime';
 import { cn } from '@/lib/utils';
 import {
-    index as clientsIndex,
     create as clientsCreate,
+    index as clientsIndex,
     show as clientsShow,
 } from '@/routes/clients';
 import type { Client } from './types';
 
-export default function ClientsIndex({ clients }: { clients: Client[] }) {
+export default function ClientsIndex({
+    clients: initialClients,
+}: {
+    clients: Client[];
+}) {
     const { t } = useTranslation();
     const { auth, can } = usePage().props;
     const currentUserId = auth.user?.id ?? null;
+    const clients = useRealtime(initialClients, {
+        created: {
+            channel: 'clients',
+            event: '.client.created',
+            resourceKey: 'client',
+        },
+        updated: {
+            channel: 'clients',
+            event: '.client.updated',
+            resourceKey: 'client',
+        },
+        deleted: {
+            channel: 'clients',
+            event: '.client.deleted',
+            resourceKey: 'client',
+        },
+    });
 
     return (
         <>
@@ -51,10 +73,12 @@ export default function ClientsIndex({ clients }: { clients: Client[] }) {
                                 <Users className="size-5" />
                                 {t('clients.noClientsTitle')}
                             </CardTitle>
+
                             <CardDescription>
                                 {t('clients.noClientsDescription')}
                             </CardDescription>
                         </CardHeader>
+
                         {can.canClientsCreate && (
                             <CardContent>
                                 <Button asChild>
@@ -73,18 +97,23 @@ export default function ClientsIndex({ clients }: { clients: Client[] }) {
                                     <th className="px-4 py-3 font-medium">
                                         {t('common.name')}
                                     </th>
+
                                     <th className="px-4 py-3 font-medium">
                                         {t('common.email')}
                                     </th>
+
                                     <th className="px-4 py-3 font-medium">
                                         {t('common.phone')}
                                     </th>
+
                                     <th className="px-4 py-3 font-medium">
                                         {t('clients.coordinator')}
                                     </th>
+
                                     <th className="px-4 py-3 font-medium" />
                                 </tr>
                             </thead>
+
                             <tbody>
                                 {clients.map((client) => {
                                     const isOwn =
@@ -103,16 +132,20 @@ export default function ClientsIndex({ clients }: { clients: Client[] }) {
                                             <td className="px-4 py-3 font-medium">
                                                 {client.name}
                                             </td>
+
                                             <td className="px-4 py-3 text-muted-foreground">
                                                 {client.email ?? '—'}
                                             </td>
+
                                             <td className="px-4 py-3 text-muted-foreground">
                                                 {client.phone ?? '—'}
                                             </td>
+
                                             <td className="px-4 py-3 text-muted-foreground">
                                                 {client.coordinator?.name ??
                                                     '—'}
                                             </td>
+
                                             <td className="px-4 py-3 text-right">
                                                 <Button
                                                     variant="outline"
